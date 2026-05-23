@@ -166,8 +166,17 @@ function Onboarding() {
           )}
           {step < 2 ? (
             <button
-              onClick={() => setStep((s) => s + 1)}
-              disabled={step === 1 && children.length === 0}
+              onClick={() => {
+                let list = children;
+                if (step === 1 && name.trim() && age !== "") {
+                  list = [...children, { id: crypto.randomUUID(), name: name.trim(), age: Number(age) }];
+                  setChildren(list);
+                  setName(""); setAge("");
+                }
+                if (step === 1 && list.length === 0) return;
+                setStep((s) => s + 1);
+              }}
+              disabled={step === 1 && children.length === 0 && (!name.trim() || age === "")}
               className="flex-1 rounded-full px-5 py-3 text-sm font-semibold bg-primary text-primary-foreground inline-flex items-center justify-center gap-2 disabled:opacity-40"
             >
               {step === 0 ? "Let's go" : "Next"} <ArrowRight className="w-4 h-4" />
