@@ -96,16 +96,18 @@ function ActivityDetail() {
         </ol>
       </section>
 
-      <section className="px-6 mt-8">
-        <div className="rounded-2xl bg-sage/25 border border-sage/40 p-5">
-          <h2 className="font-display text-base font-semibold flex items-center gap-2 text-sage-foreground">
-            <Users className="w-4 h-4" /> Sibling mode
-          </h2>
-          <p className="text-sm mt-2 leading-relaxed text-sage-foreground/90">
-            {activity.siblingTip}
-          </p>
-        </div>
-      </section>
+      {profile.children.length >= 2 && (
+        <section className="px-6 mt-8">
+          <div className="rounded-2xl bg-sage/25 border border-sage/40 p-5">
+            <h2 className="font-display text-base font-semibold flex items-center gap-2 text-sage-foreground">
+              <Users className="w-4 h-4" /> Sibling mode
+            </h2>
+            <p className="text-sm mt-2 leading-relaxed text-sage-foreground/90">
+              {activity.siblingTip}
+            </p>
+          </div>
+        </section>
+      )}
 
       <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-6 py-4">
         <div className="max-w-md mx-auto">
