@@ -72,7 +72,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1" },
-      { title: "Sprout — Activities for busy parents" },
+      { title: "Spark - Activity Ideas for Busy Parents" },
       { name: "description", content: "Activity ideas for your kids using what you already have at home." },
       { name: "theme-color", content: "#c4654a" },
     ],
