@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useProfile, PANTRY_CATEGORIES } from "@/lib/store";
 import { pickActivity } from "@/lib/activities";
-import { generateActivity, cacheActivity, getRecentTitles, addRecentTitle } from "@/lib/generate-activity";
+import { generateActivity, cacheActivity, getRecentTitles, addRecentTitle, saveLastInputs } from "@/lib/generate-activity";
 import { ArrowLeft, Battery, BatteryMedium, BatteryFull, Clock, Home, Trees, ArrowRight, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/right-now")({
@@ -51,6 +51,7 @@ function RightNow() {
       });
       cacheActivity(activity);
       addRecentTitle(activity.title);
+      saveLastInputs({ energy: energy!, time: time!, location: finalLoc, ages: profile.children.map((c) => c.age), categories });
       navigate({ to: "/activity/$id", params: { id: activity.id } });
     } catch {
       const pick = pickActivity({

@@ -100,6 +100,25 @@ Return ONLY valid JSON with no markdown or explanation:
 
 // ---- Client-side cache (localStorage) ----
 
+const INPUTS_KEY = "spark_last_inputs_v1";
+
+export type SavedInputs = Omit<GenerateInput, "recentTitles">;
+
+export function saveLastInputs(inputs: SavedInputs): void {
+  try {
+    localStorage.setItem(INPUTS_KEY, JSON.stringify(inputs));
+  } catch {}
+}
+
+export function getLastInputs(): SavedInputs | null {
+  try {
+    const raw = localStorage.getItem(INPUTS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 const CACHE_KEY = "spark_generated_activities_v1";
 const RECENT_KEY = "spark_recent_titles_v1";
 const MAX_RECENT = 15;

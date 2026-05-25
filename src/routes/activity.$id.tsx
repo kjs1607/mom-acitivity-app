@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ACTIVITIES, missingItems } from "@/lib/activities";
-import { getCachedActivity } from "@/lib/generate-activity";
+import { generateActivity, getCachedActivity, cacheActivity, getRecentTitles, addRecentTitle, getLastInputs } from "@/lib/generate-activity";
 import { useProfile } from "@/lib/store";
 import { ArrowLeft, Check, ShoppingBag, Clock, Users, CalendarPlus, RefreshCw, Bookmark } from "lucide-react";
 import { useState } from "react";
@@ -16,6 +16,24 @@ function ActivityDetail() {
   const activity = ACTIVITIES.find((a) => a.id === id) ?? getCachedActivity(id);
   const [added, setAdded] = useState<"saturday" | "sunday" | null>(null);
   const [doneFlash, setDoneFlash] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+
+  const tryAnother = async () => {
+    const lastInputs = getLastInputs();
+    if (!lastInputs) { navigate({ to: "/right-now" }); return; }
+    setRegenerating(true);
+    try {
+      const recentTitles = getRecentTitles();
+      const next = await generateActivity({ data: { ...lastInputs, recentTitles } });
+      cacheActivity(next);
+      addRecentTitle(next.title);
+      navigate({ to: "/activity/$id", params: { id: next.id } });
+    } catch {
+      navigate({ to: "/right-now" });
+    } finally {
+      setRegenerating(false);
+    }
+  };
 
   if (!activity) {
     return (
@@ -91,9 +109,14 @@ function ActivityDetail() {
           >
             <Bookmark className={`w-5 h-5 ${isSaved ? "fill-primary text-primary" : "text-muted-foreground"}`} />
           </button>
-          <Link to="/right-now" className="text-sm text-muted-foreground inline-flex items-center gap-1">
-            <RefreshCw className="w-4 h-4" /> Try another
-          </Link>
+          <button
+            onClick={tryAnother}
+            disabled={regenerating}
+            className="text-sm text-muted-foreground inline-flex items-center gap-1 disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${regenerating ? "animate-spin" : ""}`} />
+            {regenerating ? "Finding…" : "Try another"}
+          </button>
         </div>
       </header>
 
