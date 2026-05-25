@@ -59,6 +59,8 @@ ${categoryLines}
 ${avoidSection}
 Be creative and suggest diverse activities — avoid repeating similar suggestions. Think beyond obvious crafts. Each suggestion should feel fresh and different from typical kids' activities.
 
+If the activity involves making something (dough, slime, paint, sensory materials, edible crafts, mixtures), include exact measurements in the steps. Write it like a recipe: "1 cup flour + ½ cup water + 2–3 drops food coloring — mix until smooth" rather than "mix flour with water".
+
 Return ONLY valid JSON with no markdown or explanation:
 {
   "title": "Short, catchy name",

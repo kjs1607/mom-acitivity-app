@@ -28,6 +28,20 @@ function ActivityDetail() {
 
   const missing = missingItems(activity, profile.pantry);
   const have = activity.needs.filter((n) => !missing.includes(n));
+
+  const COMMON_ITEMS = [
+    "flour","egg","sugar","salt","water","milk","butter","oil","vinegar","baking soda","baking powder","food coloring",
+    "paper","cardboard","tissue","newspaper","magazine",
+    "marker","crayon","pencil","pen","chalk",
+    "pillow","blanket","cushion","sheet","towel","cloth","fabric",
+    "stuffed animal","toy","block","ball","puzzle","doll",
+    "bowl","spoon","cup","plate","pot","pan","tray","container","bag","box",
+    "chair","table","couch","sofa","furniture","book","tape","string","yarn",
+    "sock","shoe","rubber band","bottle","lid","straw","fork","stick",
+  ];
+
+  const isCommon = (item: string) =>
+    COMMON_ITEMS.some((c) => item.toLowerCase().includes(c));
   const isSaved = (profile.saved ?? []).includes(activity.id);
 
   const toggleSave = () => {
@@ -64,7 +78,7 @@ function ActivityDetail() {
   };
 
   return (
-    <main className="min-h-screen bg-background pb-32">
+    <main className="min-h-screen bg-background pb-56">
       <header className="px-6 pt-12 flex items-center justify-between">
         <button onClick={() => navigate({ to: "/" })} className="p-2 -ml-2 rounded-full hover:bg-muted" aria-label="Back">
           <ArrowLeft className="w-5 h-5" />
@@ -109,7 +123,7 @@ function ActivityDetail() {
             <li key={n} className="flex items-center gap-3 rounded-xl bg-card border border-dashed border-primary/40 px-4 py-3 text-sm">
               <div className="w-4 h-4 rounded-full border-2 border-primary/40" />
               <span className="flex-1">{n}</span>
-              <span className="text-xs text-primary font-medium">grab this</span>
+              {!isCommon(n) && <span className="text-xs text-primary font-medium">grab this</span>}
             </li>
           ))}
         </ul>
