@@ -56,6 +56,7 @@ function ActivityDetail() {
     "bowl","spoon","cup","plate","pot","pan","tray","container","bag","box",
     "chair","table","couch","sofa","furniture","book","tape","string","yarn",
     "sock","shoe","rubber band","bottle","lid","straw","fork","stick",
+    "space","area","ground","grass","sunshine","sunlight","sun","shadow","yourself","presence","outdoor","backyard","yard","park",
   ];
 
   const isCommon = (item: string) =>
