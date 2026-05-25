@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useProfile, PANTRY_OPTIONS } from "@/lib/store";
-import { ArrowLeft, Check, RotateCcw } from "lucide-react";
+import { useProfile, PANTRY_CATEGORIES } from "@/lib/store";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -10,10 +10,10 @@ function Settings() {
   const { profile, update } = useProfile();
   const navigate = useNavigate();
 
-  const togglePantry = (item: string) =>
+  const toggleCategory = (id: string) =>
     update((p) => ({
       ...p,
-      pantry: p.pantry.includes(item) ? p.pantry.filter((i) => i !== item) : [...p.pantry, item],
+      pantry: p.pantry.includes(id) ? p.pantry.filter((i) => i !== id) : [...p.pantry, id],
     }));
 
   const reset = () => {
@@ -49,22 +49,26 @@ function Settings() {
       </section>
 
       <section className="px-6 mt-8">
-        <h2 className="font-display text-lg font-semibold mb-3">Pantry</h2>
-        <div className="flex flex-wrap gap-2">
-          {PANTRY_OPTIONS.map((item) => {
-            const on = profile.pantry.includes(item);
+        <h2 className="font-display text-lg font-semibold mb-1">What you have</h2>
+        <p className="text-sm text-muted-foreground mb-4">Pre-selects your choices in the Right Now flow.</p>
+        <div className="grid grid-cols-2 gap-3">
+          {PANTRY_CATEGORIES.map((cat) => {
+            const selected = profile.pantry.includes(cat.id);
             return (
               <button
-                key={item}
-                onClick={() => togglePantry(item)}
-                className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium border transition-colors ${
-                  on
+                key={cat.id}
+                onClick={() => toggleCategory(cat.id)}
+                className={`flex flex-col items-start gap-2 rounded-2xl p-4 border text-left transition-colors active:scale-[0.98] ${
+                  selected
                     ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card text-foreground border-border"
+                    : "bg-card border-border hover:border-foreground/20"
                 }`}
               >
-                {on && <Check className="w-3.5 h-3.5" />}
-                {item}
+                <span className="text-3xl">{cat.emoji}</span>
+                <p className="font-display font-semibold text-sm leading-tight">{cat.label}</p>
+                <p className={`text-xs leading-snug ${selected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                  {cat.description}
+                </p>
               </button>
             );
           })}

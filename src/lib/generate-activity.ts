@@ -9,8 +9,19 @@ export type GenerateInput = {
   time: 10 | 30 | 60;
   location: "inside" | "outside";
   ages: number[];
-  pantry: string[];
+  categories: string[];
   recentTitles: string[];
+};
+
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  kitchen:   "kitchen supplies (flour, eggs, food coloring, basic ingredients)",
+  art:       "art supplies (paint, crayons, markers, paper, glue)",
+  building:  "building materials (cardboard, tape, scissors, boxes)",
+  outdoor:   "outdoor access (yard, park, balcony, sidewalk)",
+  toys:      "toys (blocks, balls, stuffed animals, puzzles)",
+  water:     "water play items (buckets, cups, sponges, hose)",
+  household: "random household items (pillows, blankets, furniture)",
+  nothing:   "no supplies — use nothing at all",
 };
 
 // ---- Server function ----
@@ -27,9 +38,14 @@ export const generateActivity = createServerFn({ method: "POST" })
           ? `a ${data.ages[0]}-year-old`
           : `kids aged ${data.ages.join(" and ")}`;
 
+    const categoryLines =
+      data.categories.length > 0
+        ? data.categories.map((id) => `  - ${CATEGORY_DESCRIPTIONS[id] ?? id}`).join("\n")
+        : "  - common household items";
+
     const avoidSection =
       data.recentTitles.length > 0
-        ? `\n\nDo NOT suggest any of these recently shown activities: ${data.recentTitles.join(", ")}.`
+        ? `\nDo NOT suggest any of these recently shown activities: ${data.recentTitles.join(", ")}.`
         : "";
 
     const prompt = `Generate a unique, creative kids activity for ${ageDesc}.
@@ -38,9 +54,10 @@ Constraints:
 - Energy level: ${data.energy}
 - Duration: ~${data.time} minutes
 - Location: ${data.location === "inside" ? "indoors" : "outdoors"}
-${data.pantry.length > 0 ? `- Available supplies: ${data.pantry.join(", ")}` : "- Use common household items"}${avoidSection}
-
-Generate a unique activity — be creative and avoid suggesting the same activities repeatedly. Each suggestion should feel fresh and different.
+- Available resources:
+${categoryLines}
+${avoidSection}
+Be creative and suggest diverse activities — avoid repeating similar suggestions. Think beyond obvious crafts. Each suggestion should feel fresh and different from typical kids' activities.
 
 Return ONLY valid JSON with no markdown or explanation:
 {

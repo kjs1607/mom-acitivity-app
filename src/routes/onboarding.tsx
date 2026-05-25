@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { useProfile, PANTRY_OPTIONS, type Child } from "@/lib/store";
-import { Plus, X, Check, ArrowRight } from "lucide-react";
+import { useProfile, type Child } from "@/lib/store";
+import { Plus, X, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
@@ -14,18 +14,15 @@ function Onboarding() {
   const [children, setChildren] = useState<Child[]>(profile.children.length ? profile.children : []);
   const [name, setName] = useState("");
   const [age, setAge] = useState<number | "">("");
-  const [pantry, setPantry] = useState<string[]>(profile.pantry);
 
   const addChild = () => {
     if (!name.trim() || age === "") return;
     setChildren((c) => [...c, { id: crypto.randomUUID(), name: name.trim(), age: Number(age) }]);
     setName(""); setAge("");
   };
-  const togglePantry = (item: string) =>
-    setPantry((p) => (p.includes(item) ? p.filter((i) => i !== item) : [...p, item]));
 
   const finish = () => {
-    update({ children, pantry, onboarded: true });
+    update({ children, onboarded: true });
     navigate({ to: "/" });
   };
 
@@ -33,7 +30,7 @@ function Onboarding() {
     <main className="min-h-screen bg-background pb-32">
       <header className="px-6 pt-12 pb-2">
         <div className="flex gap-1.5 mb-6">
-          {[0, 1, 2].map((i) => (
+          {[0, 1].map((i) => (
             <div
               key={i}
               className={`h-1 flex-1 rounded-full transition-colors ${
@@ -50,13 +47,13 @@ function Onboarding() {
             Hi. Let's keep this short.
           </h1>
           <p className="text-muted-foreground mt-3 leading-relaxed">
-            No account. No email. Just two quick steps so we can hand you the right idea on the right day.
+            No account. No email. Just one quick step so we can hand you the right idea on the right day.
           </p>
           <div className="mt-10 rounded-3xl bg-cream border border-border p-6">
             <p className="font-display text-xl leading-snug">
               You bring the kids.<br/>We bring the idea.
             </p>
-            <p className="text-sm text-muted-foreground mt-2">Takes 60 seconds.</p>
+            <p className="text-sm text-muted-foreground mt-2">Takes 30 seconds.</p>
           </div>
         </section>
       )}
@@ -120,40 +117,6 @@ function Onboarding() {
         </section>
       )}
 
-      {step === 2 && (
-        <section className="px-6 animate-in fade-in duration-300">
-          <h1 className="text-2xl font-display font-semibold leading-tight">
-            What's in your house?
-          </h1>
-          <p className="text-muted-foreground mt-2 text-sm">
-            Tap anything you usually have on hand. We'll suggest things you can actually make.
-          </p>
-
-          <div className="mt-6 flex flex-wrap gap-2">
-            {PANTRY_OPTIONS.map((item) => {
-              const on = pantry.includes(item);
-              return (
-                <button
-                  key={item}
-                  onClick={() => togglePantry(item)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium border transition-colors ${
-                    on
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card text-foreground border-border hover:border-foreground/30"
-                  }`}
-                >
-                  {on && <Check className="w-3.5 h-3.5" />}
-                  {item}
-                </button>
-              );
-            })}
-          </div>
-          <p className="text-xs text-muted-foreground mt-6">
-            You can change these anytime in Settings.
-          </p>
-        </section>
-      )}
-
       <footer className="fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur border-t border-border px-6 py-4">
         <div className="flex gap-3 max-w-md mx-auto">
           {step > 0 && (
@@ -164,29 +127,30 @@ function Onboarding() {
               Back
             </button>
           )}
-          {step < 2 ? (
+          {step < 1 ? (
+            <button
+              onClick={() => setStep((s) => s + 1)}
+              className="flex-1 rounded-full px-5 py-3 text-sm font-semibold bg-primary text-primary-foreground inline-flex items-center justify-center gap-2"
+            >
+              Let's go <ArrowRight className="w-4 h-4" />
+            </button>
+          ) : (
             <button
               onClick={() => {
                 let list = children;
-                if (step === 1 && name.trim() && age !== "") {
+                if (name.trim() && age !== "") {
                   list = [...children, { id: crypto.randomUUID(), name: name.trim(), age: Number(age) }];
                   setChildren(list);
                   setName(""); setAge("");
                 }
-                if (step === 1 && list.length === 0) return;
-                setStep((s) => s + 1);
+                if (list.length === 0) return;
+                update({ children: list, onboarded: true });
+                navigate({ to: "/" });
               }}
-              disabled={step === 1 && children.length === 0 && (!name.trim() || age === "")}
+              disabled={children.length === 0 && (!name.trim() || age === "")}
               className="flex-1 rounded-full px-5 py-3 text-sm font-semibold bg-primary text-primary-foreground inline-flex items-center justify-center gap-2 disabled:opacity-40"
             >
-              {step === 0 ? "Let's go" : "Next"} <ArrowRight className="w-4 h-4" />
-            </button>
-          ) : (
-            <button
-              onClick={finish}
-              className="flex-1 rounded-full px-5 py-3 text-sm font-semibold bg-primary text-primary-foreground inline-flex items-center justify-center gap-2"
-            >
-              Done — show me ideas <ArrowRight className="w-4 h-4" />
+              Done — let's go <ArrowRight className="w-4 h-4" />
             </button>
           )}
         </div>

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useProfile } from "@/lib/store";
+import { useProfile, PANTRY_CATEGORIES } from "@/lib/store";
 import { pickActivity } from "@/lib/activities";
 import { generateActivity, cacheActivity, getRecentTitles, addRecentTitle } from "@/lib/generate-activity";
 import { ArrowLeft, Battery, BatteryMedium, BatteryFull, Clock, Home, Trees, ArrowRight, Sparkles } from "lucide-react";
@@ -13,22 +13,27 @@ type Energy = "low" | "medium" | "high";
 type Time = 10 | 30 | 60;
 type Loc = "inside" | "outside";
 
+const TOTAL_STEPS = 4;
+
 function RightNow() {
   const { profile } = useProfile();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [energy, setEnergy] = useState<Energy | null>(null);
   const [time, setTime] = useState<Time | null>(null);
+  const [categories, setCategories] = useState<string[]>(profile.pantry ?? []);
   const [loc, setLoc] = useState<Loc | null>(null);
   const [loading, setLoading] = useState(false);
 
   const onPick = <T,>(setter: (v: T) => void, v: T) => {
     setter(v);
-    setTimeout(() => {
-      if (step < 2) setStep((s) => s + 1);
-      else finish(v as unknown as Loc);
-    }, 180);
+    setTimeout(() => setStep((s) => s + 1), 180);
   };
+
+  const toggleCategory = (id: string) =>
+    setCategories((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
 
   const finish = async (finalLoc: Loc) => {
     setLoading(true);
@@ -40,7 +45,7 @@ function RightNow() {
           time: time!,
           location: finalLoc,
           ages: profile.children.map((c) => c.age),
-          pantry: profile.pantry,
+          categories,
           recentTitles,
         },
       });
@@ -48,7 +53,6 @@ function RightNow() {
       addRecentTitle(activity.title);
       navigate({ to: "/activity/$id", params: { id: activity.id } });
     } catch {
-      // Fallback to static picker if API call fails
       const pick = pickActivity({
         energy: energy!,
         time: time!,
@@ -81,10 +85,10 @@ function RightNow() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex gap-1.5">
-          {[0, 1, 2].map((i) => (
+          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
             <div
               key={i}
-              className={`h-1 w-8 rounded-full ${i <= step ? "bg-primary" : "bg-muted"}`}
+              className={`h-1 w-7 rounded-full ${i <= step ? "bg-primary" : "bg-muted"}`}
             />
           ))}
         </div>
@@ -99,6 +103,7 @@ function RightNow() {
             <Choice icon={<BatteryFull className="w-6 h-6" />} label="High" hint="Let's get loud" onClick={() => onPick(setEnergy, "high")} />
           </Question>
         )}
+
         {step === 1 && (
           <Question title="How much time?" subtitle="Counting from right now.">
             <Choice icon={<Clock className="w-6 h-6" />} label="10 minutes" hint="A quick reset" onClick={() => onPick(setTime, 10)} />
@@ -106,13 +111,54 @@ function RightNow() {
             <Choice icon={<Clock className="w-6 h-6" />} label="1 hour +" hint="Settle in" onClick={() => onPick(setTime, 60)} />
           </Question>
         )}
+
         {step === 2 && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 pb-28">
+            <h1 className="text-3xl font-display font-semibold leading-tight">What do you have?</h1>
+            <p className="text-muted-foreground mt-2">Pick everything that applies.</p>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              {PANTRY_CATEGORIES.map((cat) => {
+                const selected = categories.includes(cat.id);
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => toggleCategory(cat.id)}
+                    className={`flex flex-col items-start gap-2 rounded-2xl p-4 border text-left transition-colors active:scale-[0.98] ${
+                      selected
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card border-border hover:border-foreground/20"
+                    }`}
+                  >
+                    <span className="text-3xl">{cat.emoji}</span>
+                    <p className="font-display font-semibold text-sm leading-tight">{cat.label}</p>
+                    <p className={`text-xs leading-snug ${selected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                      {cat.description}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
           <Question title="Inside or outside?" subtitle="">
-            <Choice icon={<Home className="w-6 h-6" />} label="Inside" hint="Living room or kitchen" onClick={() => onPick(setLoc, "inside")} />
-            <Choice icon={<Trees className="w-6 h-6" />} label="Outside" hint="Yard, balcony, park" onClick={() => onPick(setLoc, "outside")} />
+            <Choice icon={<Home className="w-6 h-6" />} label="Inside" hint="Living room or kitchen" onClick={() => { setLoc("inside"); finish("inside"); }} />
+            <Choice icon={<Trees className="w-6 h-6" />} label="Outside" hint="Yard, balcony, park" onClick={() => { setLoc("outside"); finish("outside"); }} />
           </Question>
         )}
       </section>
+
+      {step === 2 && (
+        <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-6 py-4">
+          <button
+            onClick={() => setStep(3)}
+            className="w-full max-w-md mx-auto flex rounded-full py-3 text-sm font-semibold bg-primary text-primary-foreground items-center justify-center gap-2"
+          >
+            Continue <ArrowRight className="w-4 h-4" />
+          </button>
+        </footer>
+      )}
     </main>
   );
 }

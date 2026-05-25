@@ -55,10 +55,20 @@ export function useProfile() {
   return { profile, update, ready };
 }
 
-export const PANTRY_OPTIONS = [
-  "Flour", "Eggs", "Sugar", "Salt", "Baking soda", "Food coloring",
-  "Paint", "Crayons", "Markers", "Paper", "Cardboard", "Glue",
-  "Tape", "Scissors", "Pasta", "Rice", "Beans (dry)", "Cotton balls",
-  "Ice cube tray", "Balloons", "String/yarn", "Sidewalk chalk",
-  "Empty boxes", "Plastic cups", "Sponges", "Bubble wrap",
+export type PantryCategory = {
+  id: string;
+  emoji: string;
+  label: string;
+  description: string;
+};
+
+export const PANTRY_CATEGORIES: PantryCategory[] = [
+  { id: "kitchen",  emoji: "🍳", label: "Kitchen stuff",       description: "flour, eggs, food coloring, basic ingredients" },
+  { id: "art",      emoji: "🎨", label: "Art supplies",         description: "paint, crayons, markers, paper, glue" },
+  { id: "building", emoji: "🏗️", label: "Building materials",   description: "cardboard, tape, scissors, boxes" },
+  { id: "outdoor",  emoji: "🌿", label: "Outdoor access",       description: "yard, park, balcony, sidewalk" },
+  { id: "toys",     emoji: "🧸", label: "Toys",                 description: "blocks, balls, stuffed animals, puzzles" },
+  { id: "water",    emoji: "💧", label: "Water play",           description: "buckets, cups, sponges, hose" },
+  { id: "household",emoji: "📦", label: "Random household",     description: "pillows, blankets, furniture" },
+  { id: "nothing",  emoji: "✨", label: "Nothing needed",       description: "no supplies required" },
 ];
