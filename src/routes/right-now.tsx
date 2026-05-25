@@ -116,20 +116,20 @@ function RightNow() {
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 pb-28">
             <h1 className="text-3xl font-display font-semibold leading-tight">What do you have?</h1>
             <p className="text-muted-foreground mt-2">Pick everything that applies.</p>
-            <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid grid-cols-2 gap-2">
               {PANTRY_CATEGORIES.map((cat) => {
                 const selected = categories.includes(cat.id);
                 return (
                   <button
                     key={cat.id}
                     onClick={() => toggleCategory(cat.id)}
-                    className={`flex flex-col items-start gap-2 rounded-2xl p-4 border text-left transition-colors active:scale-[0.98] ${
+                    className={`flex flex-col items-start gap-1.5 rounded-2xl p-3 border text-left transition-colors active:scale-[0.98] ${
                       selected
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-card border-border hover:border-foreground/20"
                     }`}
                   >
-                    <span className="text-3xl">{cat.emoji}</span>
+                    <span className="text-2xl">{cat.emoji}</span>
                     <p className="font-display font-semibold text-sm leading-tight">{cat.label}</p>
                     <p className={`text-xs leading-snug ${selected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
                       {cat.description}
