@@ -14,6 +14,7 @@ function ActivityDetail() {
   const navigate = useNavigate();
   const activity = ACTIVITIES.find((a) => a.id === id);
   const [added, setAdded] = useState<"saturday" | "sunday" | null>(null);
+  const [doneFlash, setDoneFlash] = useState(false);
 
   if (!activity) {
     return (
@@ -35,6 +36,18 @@ function ActivityDetail() {
         ? (p.saved ?? []).filter((id) => id !== activity.id)
         : [...(p.saved ?? []), activity.id],
     }));
+  };
+
+  const markDone = () => {
+    update((p) => ({
+      ...p,
+      completed: [
+        { id: activity.id, date: new Date().toISOString() },
+        ...(p.completed ?? []),
+      ],
+    }));
+    setDoneFlash(true);
+    setTimeout(() => setDoneFlash(false), 1600);
   };
 
   const addToDay = (day: "saturday" | "sunday") => {
@@ -129,8 +142,14 @@ function ActivityDetail() {
       )}
 
       <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-6 py-4">
-        <div className="max-w-md mx-auto">
-          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+        <div className="max-w-md mx-auto space-y-2">
+          <button
+            onClick={markDone}
+            className="w-full rounded-full py-3 text-sm font-semibold bg-sage text-sage-foreground transition-colors"
+          >
+            {doneFlash ? "Logged ✓" : "We did this! ✅"}
+          </button>
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
             <CalendarPlus className="w-3 h-3" /> Save for the weekend
           </p>
           <div className="flex gap-2">

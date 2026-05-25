@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useProfile } from "@/lib/store";
 import { ACTIVITIES } from "@/lib/activities";
-import { Sparkles, CalendarDays, Settings, Bookmark } from "lucide-react";
+import { Sparkles, CalendarDays, Settings, Bookmark, CheckCircle2 } from "lucide-react";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
@@ -102,6 +102,36 @@ function Index() {
                     <p className="text-xs text-muted-foreground mt-0.5">{activity.time} min · {activity.energy} energy</p>
                   </div>
                   <Bookmark className="w-4 h-4 fill-primary text-primary flex-shrink-0" />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {(profile.completed ?? []).length > 0 && (
+        <section className="px-6 mt-10">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-1.5">
+            <CheckCircle2 className="w-3.5 h-3.5" /> History
+          </p>
+          <div className="mt-3 space-y-2">
+            {(profile.completed ?? []).map((entry, i) => {
+              const activity = ACTIVITIES.find((a) => a.id === entry.id);
+              if (!activity) return null;
+              const date = new Date(entry.date);
+              const label = date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+              return (
+                <Link
+                  key={i}
+                  to="/activity/$id"
+                  params={{ id: entry.id }}
+                  className="flex items-center justify-between rounded-2xl bg-card border border-border px-4 py-3 hover:border-primary transition-colors"
+                >
+                  <div>
+                    <p className="font-medium text-sm">{activity.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+                  </div>
+                  <CheckCircle2 className="w-4 h-4 text-sage-foreground flex-shrink-0" />
                 </Link>
               );
             })}

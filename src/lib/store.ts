@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 
 export type Child = { id: string; name: string; age: number };
+export type CompletedActivity = { id: string; date: string };
+
 export type Profile = {
   children: Child[];
   pantry: string[];
   weekend: { saturday: string[]; sunday: string[] };
   saved: string[];
+  completed: CompletedActivity[];
   onboarded: boolean;
 };
 
@@ -16,6 +19,7 @@ const DEFAULT: Profile = {
   pantry: [],
   weekend: { saturday: [], sunday: [] },
   saved: [],
+  completed: [],
   onboarded: false,
 };
 
