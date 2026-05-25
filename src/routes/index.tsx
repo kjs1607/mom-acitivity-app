@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useProfile } from "@/lib/store";
-import { Sparkles, CalendarDays, Settings } from "lucide-react";
+import { ACTIVITIES } from "@/lib/activities";
+import { Sparkles, CalendarDays, Settings, Bookmark } from "lucide-react";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
@@ -79,6 +80,34 @@ function Index() {
           </p>
         </div>
       </section>
+
+      {(profile.saved ?? []).length > 0 && (
+        <section className="px-6 mt-10">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-1.5">
+            <Bookmark className="w-3.5 h-3.5" /> Saved
+          </p>
+          <div className="mt-3 space-y-2">
+            {(profile.saved ?? []).map((id) => {
+              const activity = ACTIVITIES.find((a) => a.id === id);
+              if (!activity) return null;
+              return (
+                <Link
+                  key={id}
+                  to="/activity/$id"
+                  params={{ id }}
+                  className="flex items-center justify-between rounded-2xl bg-card border border-border px-4 py-3 hover:border-primary transition-colors"
+                >
+                  <div>
+                    <p className="font-medium text-sm">{activity.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{activity.time} min · {activity.energy} energy</p>
+                  </div>
+                  <Bookmark className="w-4 h-4 fill-primary text-primary flex-shrink-0" />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

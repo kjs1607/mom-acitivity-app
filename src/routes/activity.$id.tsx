@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ACTIVITIES, missingItems } from "@/lib/activities";
 import { useProfile } from "@/lib/store";
-import { ArrowLeft, Check, ShoppingBag, Clock, Users, CalendarPlus, RefreshCw } from "lucide-react";
+import { ArrowLeft, Check, ShoppingBag, Clock, Users, CalendarPlus, RefreshCw, Bookmark } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/activity/$id")({
@@ -26,6 +26,16 @@ function ActivityDetail() {
 
   const missing = missingItems(activity, profile.pantry);
   const have = activity.needs.filter((n) => !missing.includes(n));
+  const isSaved = (profile.saved ?? []).includes(activity.id);
+
+  const toggleSave = () => {
+    update((p) => ({
+      ...p,
+      saved: isSaved
+        ? (p.saved ?? []).filter((id) => id !== activity.id)
+        : [...(p.saved ?? []), activity.id],
+    }));
+  };
 
   const addToDay = (day: "saturday" | "sunday") => {
     update((p) => ({
@@ -45,9 +55,18 @@ function ActivityDetail() {
         <button onClick={() => navigate({ to: "/" })} className="p-2 -ml-2 rounded-full hover:bg-muted" aria-label="Back">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <Link to="/right-now" className="text-sm text-muted-foreground inline-flex items-center gap-1">
-          <RefreshCw className="w-4 h-4" /> Try another
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleSave}
+            className="p-2 rounded-full hover:bg-muted transition-colors"
+            aria-label={isSaved ? "Remove bookmark" : "Save activity"}
+          >
+            <Bookmark className={`w-5 h-5 ${isSaved ? "fill-primary text-primary" : "text-muted-foreground"}`} />
+          </button>
+          <Link to="/right-now" className="text-sm text-muted-foreground inline-flex items-center gap-1">
+            <RefreshCw className="w-4 h-4" /> Try another
+          </Link>
+        </div>
       </header>
 
       <section className="px-6 pt-6">

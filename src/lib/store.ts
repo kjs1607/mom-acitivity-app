@@ -5,6 +5,7 @@ export type Profile = {
   children: Child[];
   pantry: string[];
   weekend: { saturday: string[]; sunday: string[] };
+  saved: string[];
   onboarded: boolean;
 };
 
@@ -14,6 +15,7 @@ const DEFAULT: Profile = {
   children: [],
   pantry: [],
   weekend: { saturday: [], sunday: [] },
+  saved: [],
   onboarded: false,
 };
 
