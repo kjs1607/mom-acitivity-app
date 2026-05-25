@@ -48,6 +48,13 @@ export const generateActivity = createServerFn({ method: "POST" })
         ? `\nDo NOT suggest any of these recently shown activities: ${data.recentTitles.join(", ")}.`
         : "";
 
+    const ageGuidelines = data.ages.map((age) => {
+      if (age <= 2) return `Age ${age}: sensory and repetitive exploration, 5–10 min attention span, no instructions needed — just setup and parallel play alongside the parent. No rules, no outcomes, no steps that require listening.`;
+      if (age <= 4) return `Age ${age}: imaginative play with simple 2–3 step sequences, 15–20 min engagement. Loves pretend, characters, and making things. Steps should be short and self-explanatory.`;
+      if (age <= 6) return `Age ${age}: rules-based, cooperative, loves building and completing things, 20–30 min focus. Can follow multi-step instructions. Needs a clear goal or "win" condition.`;
+      return `Age ${age}: logic, science, competition, and independence, 30–60 min focus. Can read instructions, problem-solve, track score. Treat them as capable — no baby talk, no hand-holding.`;
+    }).join("\n");
+
     const isMultipleKids = data.ages.length > 1;
 
     const siblingInstruction = isMultipleKids
@@ -69,7 +76,12 @@ export const generateActivity = createServerFn({ method: "POST" })
   "steps": ["Do this first", "Then this", "Finally this"]
 }`;
 
-    const prompt = `Generate a unique, creative kids activity for ${ageDesc}.
+    const prompt = `You are an expert in child development. Generate a unique, creative kids activity for ${ageDesc}.
+
+Child development profile for this activity:
+${ageGuidelines}
+
+The activity MUST be genuinely designed for this age — not just labeled for it. The complexity of steps, language, and structure must match the developmental stage above. Never apply toddler activity structure (sensory, open-ended, no instructions) to a child over age 5. Never apply school-age structure (rules, competition, multi-step logic) to a child under age 3.
 
 Constraints:
 - Energy level: ${data.energy}
