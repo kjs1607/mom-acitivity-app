@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ACTIVITIES, missingItems } from "@/lib/activities";
+import { getCachedActivity } from "@/lib/generate-activity";
 import { useProfile } from "@/lib/store";
 import { ArrowLeft, Check, ShoppingBag, Clock, Users, CalendarPlus, RefreshCw, Bookmark } from "lucide-react";
 import { useState } from "react";
@@ -12,7 +13,7 @@ function ActivityDetail() {
   const { id } = Route.useParams();
   const { profile, update } = useProfile();
   const navigate = useNavigate();
-  const activity = ACTIVITIES.find((a) => a.id === id);
+  const activity = ACTIVITIES.find((a) => a.id === id) ?? getCachedActivity(id);
   const [added, setAdded] = useState<"saturday" | "sunday" | null>(null);
   const [doneFlash, setDoneFlash] = useState(false);
 

@@ -2,7 +2,8 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useProfile } from "@/lib/store";
 import { pickActivity } from "@/lib/activities";
-import { ArrowLeft, Battery, BatteryMedium, BatteryFull, Clock, Home, Trees, ArrowRight } from "lucide-react";
+import { generateActivity, cacheActivity, getRecentTitles, addRecentTitle } from "@/lib/generate-activity";
+import { ArrowLeft, Battery, BatteryMedium, BatteryFull, Clock, Home, Trees, ArrowRight, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/right-now")({
   component: RightNow,
@@ -19,6 +20,7 @@ function RightNow() {
   const [energy, setEnergy] = useState<Energy | null>(null);
   const [time, setTime] = useState<Time | null>(null);
   const [loc, setLoc] = useState<Loc | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const onPick = <T,>(setter: (v: T) => void, v: T) => {
     setter(v);
@@ -28,16 +30,49 @@ function RightNow() {
     }, 180);
   };
 
-  const finish = (finalLoc: Loc) => {
-    const pick = pickActivity({
-      energy: energy!,
-      time: time!,
-      location: finalLoc,
-      ages: profile.children.map((c) => c.age),
-      pantry: profile.pantry,
-    });
-    if (pick) navigate({ to: "/activity/$id", params: { id: pick.id } });
+  const finish = async (finalLoc: Loc) => {
+    setLoading(true);
+    try {
+      const recentTitles = getRecentTitles();
+      const activity = await generateActivity({
+        data: {
+          energy: energy!,
+          time: time!,
+          location: finalLoc,
+          ages: profile.children.map((c) => c.age),
+          pantry: profile.pantry,
+          recentTitles,
+        },
+      });
+      cacheActivity(activity);
+      addRecentTitle(activity.title);
+      navigate({ to: "/activity/$id", params: { id: activity.id } });
+    } catch {
+      // Fallback to static picker if API call fails
+      const pick = pickActivity({
+        energy: energy!,
+        time: time!,
+        location: finalLoc,
+        ages: profile.children.map((c) => c.age),
+        pantry: profile.pantry,
+      });
+      if (pick) navigate({ to: "/activity/$id", params: { id: pick.id } });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 px-6">
+        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+          <Sparkles className="w-6 h-6 text-primary" />
+        </div>
+        <p className="font-display text-xl font-semibold text-center">Finding the perfect idea…</p>
+        <p className="text-sm text-muted-foreground text-center">One moment.</p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-background pb-12">
