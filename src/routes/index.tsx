@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useProfile } from "@/lib/store";
 import { ACTIVITIES } from "@/lib/activities";
-import { Sparkles, CalendarDays, Settings, Bookmark, CheckCircle2 } from "lucide-react";
+import { Sparkles, Settings, Bookmark, CheckCircle2 } from "lucide-react";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
@@ -55,19 +55,6 @@ function Index() {
           </div>
         </Link>
 
-        <Link
-          to="/weekend"
-          className="block rounded-3xl bg-sage text-sage-foreground p-6 shadow-sm active:scale-[0.99] transition-transform"
-        >
-          <CalendarDays className="w-7 h-7 mb-4 opacity-80" />
-          <h2 className="font-display text-2xl font-semibold leading-tight">Plan My Weekend</h2>
-          <p className="text-sm opacity-80 mt-2 leading-snug">
-            Slot a few ideas for Saturday & Sunday. We'll bundle the grocery list.
-          </p>
-          <div className="mt-5 inline-flex items-center text-sm font-medium bg-white/40 rounded-full px-4 py-2">
-            Let's plan ahead →
-          </div>
-        </Link>
       </section>
 
       <section className="px-6 mt-10">

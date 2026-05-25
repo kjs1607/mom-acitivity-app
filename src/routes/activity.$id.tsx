@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ACTIVITIES } from "@/lib/activities";
 import { generateActivity, getCachedActivity, cacheActivity, getRecentTitles, addRecentTitle, getLastInputs } from "@/lib/generate-activity";
 import { useProfile } from "@/lib/store";
-import { ArrowLeft, ShoppingBag, Clock, Users, CalendarPlus, RefreshCw, Bookmark } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Clock, Users, RefreshCw, Bookmark } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/activity/$id")({
@@ -14,7 +14,6 @@ function ActivityDetail() {
   const { profile, update } = useProfile();
   const navigate = useNavigate();
   const activity = ACTIVITIES.find((a) => a.id === id) ?? getCachedActivity(id);
-  const [added, setAdded] = useState<"saturday" | "sunday" | null>(null);
   const [doneFlash, setDoneFlash] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
 
@@ -65,18 +64,6 @@ function ActivityDetail() {
     }));
     setDoneFlash(true);
     setTimeout(() => setDoneFlash(false), 1600);
-  };
-
-  const addToDay = (day: "saturday" | "sunday") => {
-    update((p) => ({
-      ...p,
-      weekend: {
-        ...p.weekend,
-        [day]: Array.from(new Set([...p.weekend[day], activity.id])),
-      },
-    }));
-    setAdded(day);
-    setTimeout(() => setAdded(null), 1600);
   };
 
   return (
@@ -156,30 +143,13 @@ function ActivityDetail() {
       )}
 
       <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-6 py-4">
-        <div className="max-w-md mx-auto space-y-2">
+        <div className="max-w-md mx-auto">
           <button
             onClick={markDone}
             className="w-full rounded-full py-3 text-sm font-semibold bg-sage text-sage-foreground transition-colors"
           >
             {doneFlash ? "Logged ✓" : "We did this! ✅"}
           </button>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <CalendarPlus className="w-3 h-3" /> Save for the weekend
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => addToDay("saturday")}
-              className="flex-1 rounded-full py-3 text-sm font-semibold bg-primary text-primary-foreground"
-            >
-              {added === "saturday" ? "Added ✓" : "Saturday"}
-            </button>
-            <button
-              onClick={() => addToDay("sunday")}
-              className="flex-1 rounded-full py-3 text-sm font-semibold bg-primary text-primary-foreground"
-            >
-              {added === "sunday" ? "Added ✓" : "Sunday"}
-            </button>
-          </div>
         </div>
       </footer>
     </main>
