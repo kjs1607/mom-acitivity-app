@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ACTIVITIES, missingItems } from "@/lib/activities";
+import { ACTIVITIES } from "@/lib/activities";
 import { generateActivity, getCachedActivity, cacheActivity, getRecentTitles, addRecentTitle, getLastInputs } from "@/lib/generate-activity";
 import { useProfile } from "@/lib/store";
-import { ArrowLeft, Check, ShoppingBag, Clock, Users, CalendarPlus, RefreshCw, Bookmark } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Clock, Users, CalendarPlus, RefreshCw, Bookmark } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/activity/$id")({
@@ -44,23 +44,6 @@ function ActivityDetail() {
     );
   }
 
-  const missing = missingItems(activity, profile.pantry);
-  const have = activity.needs.filter((n) => !missing.includes(n));
-
-  const COMMON_ITEMS = [
-    "flour","egg","sugar","salt","water","milk","butter","oil","vinegar","baking soda","baking powder","food coloring",
-    "paper","cardboard","tissue","newspaper","magazine",
-    "marker","crayon","pencil","pen","chalk",
-    "pillow","blanket","cushion","sheet","towel","cloth","fabric",
-    "stuffed animal","toy","block","ball","puzzle","doll",
-    "bowl","spoon","cup","plate","pot","pan","tray","container","bag","box",
-    "chair","table","couch","sofa","furniture","book","tape","string","yarn",
-    "sock","shoe","rubber band","bottle","lid","straw","fork","stick",
-    "space","area","ground","grass","sunshine","sunlight","sun","shadow","yourself","presence","outdoor","backyard","yard","park",
-  ];
-
-  const isCommon = (item: string) =>
-    COMMON_ITEMS.some((c) => item.toLowerCase().includes(c));
   const isSaved = (profile.saved ?? []).includes(activity.id);
 
   const toggleSave = () => {
@@ -136,18 +119,10 @@ function ActivityDetail() {
           <ShoppingBag className="w-4 h-4" /> What you'll need
         </h2>
         <ul className="mt-3 space-y-2">
-          {have.map((n) => (
-            <li key={n} className="flex items-center gap-3 rounded-xl bg-cream border border-border px-4 py-3 text-sm">
-              <Check className="w-4 h-4 text-sage-foreground" />
-              <span className="flex-1">{n}</span>
-              <span className="text-xs text-muted-foreground">in your pantry</span>
-            </li>
-          ))}
-          {missing.map((n) => (
-            <li key={n} className="flex items-center gap-3 rounded-xl bg-card border border-dashed border-primary/40 px-4 py-3 text-sm">
-              <div className="w-4 h-4 rounded-full border-2 border-primary/40" />
-              <span className="flex-1">{n}</span>
-              {!isCommon(n) && <span className="text-xs text-primary font-medium">grab this</span>}
+          {activity.needs.map((n) => (
+            <li key={n} className="flex items-center gap-3 rounded-xl bg-card border border-border px-4 py-3 text-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary/40 flex-shrink-0" />
+              <span>{n}</span>
             </li>
           ))}
         </ul>

@@ -48,6 +48,27 @@ export const generateActivity = createServerFn({ method: "POST" })
         ? `\nDo NOT suggest any of these recently shown activities: ${data.recentTitles.join(", ")}.`
         : "";
 
+    const isMultipleKids = data.ages.length > 1;
+
+    const siblingInstruction = isMultipleKids
+      ? `Include a siblingTip that gives a specific role to each child by age — the ${data.ages[0]}-year-old does X, the ${data.ages[data.ages.length - 1]}-year-old does Y.`
+      : `This is for ONE parent and ONE child. Do NOT mention siblings anywhere in the title, blurb, steps, or any other field.`;
+
+    const jsonSchema = isMultipleKids
+      ? `{
+  "title": "Short, catchy name",
+  "blurb": "1-2 sentences, warm and direct, parent-to-parent tone",
+  "needs": ["item 1", "item 2"],
+  "steps": ["Do this first", "Then this", "Finally this"],
+  "siblingTip": "The ${data.ages[0]}-year-old can... The ${data.ages[data.ages.length - 1]}-year-old can..."
+}`
+      : `{
+  "title": "Short, catchy name",
+  "blurb": "1-2 sentences, warm and direct, parent-to-parent tone",
+  "needs": ["item 1", "item 2"],
+  "steps": ["Do this first", "Then this", "Finally this"]
+}`;
+
     const prompt = `Generate a unique, creative kids activity for ${ageDesc}.
 
 Constraints:
@@ -61,14 +82,10 @@ Be creative and suggest diverse activities — avoid repeating similar suggestio
 
 If the activity involves making something (dough, slime, paint, sensory materials, edible crafts, mixtures), include exact measurements in the steps. Write it like a recipe: "1 cup flour + ½ cup water + 2–3 drops food coloring — mix until smooth" rather than "mix flour with water".
 
+${siblingInstruction}
+
 Return ONLY valid JSON with no markdown or explanation:
-{
-  "title": "Short, catchy name",
-  "blurb": "1-2 sentences, warm and direct, parent-to-parent tone",
-  "needs": ["item 1", "item 2"],
-  "steps": ["Do this first", "Then this", "Finally this"],
-  "siblingTip": "How siblings of different ages can both participate"
-}`;
+${jsonSchema}`;
 
     const message = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
