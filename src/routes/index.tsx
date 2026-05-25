@@ -31,7 +31,7 @@ function Index() {
         <div>
           <p className="text-sm text-muted-foreground font-medium">{greet},</p>
           <h1 className="text-3xl font-display font-semibold text-foreground mt-1">
-            Mom of {profile.children.map((c) => c.name.split(" ")[0]).join(" & ") || firstName}.
+            {profile.children.map((c) => c.name.split(" ")[0]).join(" & ") || firstName}.
           </h1>
         </div>
         <Link to="/settings" className="rounded-full p-2 hover:bg-muted transition-colors" aria-label="Settings">
@@ -75,7 +75,7 @@ function Index() {
         </p>
         <div className="mt-3 rounded-2xl bg-cream border border-border p-5">
           <p className="font-display text-lg text-foreground leading-snug">
-            "You're already a great mom. You're just looking for one good idea."
+            "You're already a great parent. You're just looking for one good idea."
           </p>
         </div>
       </section>
