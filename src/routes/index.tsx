@@ -48,7 +48,7 @@ function Index() {
           <Sparkles className="w-7 h-7 mb-4 opacity-90" />
           <h2 className="font-display text-2xl font-semibold leading-tight">Right Now</h2>
           <p className="text-sm opacity-90 mt-2 leading-snug">
-            Three taps. One idea you can start in the next 5 minutes.
+            Four taps. One idea you can start in the next 5 minutes.
           </p>
           <div className="mt-5 inline-flex items-center text-sm font-medium bg-white/15 rounded-full px-4 py-2">
             I need something now →
