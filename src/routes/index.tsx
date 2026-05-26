@@ -22,7 +22,6 @@ function Index() {
     return <div className="min-h-screen bg-background" />;
   }
 
-  const firstName = profile.children[0]?.name?.split(" ")[0] || "friend";
   const hour = new Date().getHours();
   const greet = hour < 12 ? "Morning" : hour < 17 ? "Afternoon" : "Evening";
 
@@ -30,9 +29,8 @@ function Index() {
     <main className="min-h-screen bg-background pb-20">
       <header className="px-6 pt-12 pb-6 flex justify-between items-start">
         <div>
-          <p className="text-sm text-muted-foreground font-medium">{greet},</p>
           <h1 className="text-3xl font-display font-semibold text-foreground mt-1">
-            {profile.children.map((c) => c.name.split(" ")[0]).join(" & ") || firstName}.
+            {greet}. Let's find something great.
           </h1>
         </div>
         <Link to="/settings" className="rounded-full p-2 hover:bg-muted transition-colors" aria-label="Settings">

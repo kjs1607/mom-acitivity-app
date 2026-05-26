@@ -47,7 +47,7 @@ function Onboarding() {
             Hi. Let's keep this short.
           </h1>
           <p className="text-muted-foreground mt-3 leading-relaxed">
-            No account. No email. Just one quick step so we can hand you the right idea on the right day.
+            No account. No email. Just a few quick steps so we can find the right idea for your family.
           </p>
           <div className="mt-10 rounded-3xl bg-cream border border-border p-6">
             <p className="font-display text-xl leading-snug">
