@@ -1,14 +1,73 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ACTIVITIES } from "@/lib/activities";
 import { generateActivity, getCachedActivity, cacheActivity, getRecentTitles, addRecentTitle, getLastInputs } from "@/lib/generate-activity";
 import { useProfile } from "@/lib/store";
-import { ArrowLeft, ShoppingBag, Clock, Users, RefreshCw, Bookmark } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/activity/$id")({
   component: ActivityDetail,
 });
 
+// ── Spark design tokens ───────────────────────────────────────────────
+const T = {
+  cream:   '#FBF4EA',
+  paper:   '#FFFBF3',
+  ink:     '#2B1810',
+  ink2:    '#5C463A',
+  ink3:    '#8B7567',
+  terra:   '#C4654A',
+  mustard: '#E8A33A',
+  sage:    '#7A8E6D',
+  plum:    '#5E3A4F',
+  border:  'rgba(43,24,16,0.10)',
+  display: '"Bricolage Grotesque", system-ui, sans-serif',
+  body:    '"Inter Tight", system-ui, sans-serif',
+  mono:    '"JetBrains Mono", ui-monospace, monospace',
+} as const;
+
+function SparkGlyph({ size = 24, color = T.ink, style }: { size?: number; color?: string; style?: React.CSSProperties }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" style={style}>
+      <path d="M50 0 C52 32 68 48 100 50 C68 52 52 68 50 100 C48 68 32 52 0 50 C32 48 48 32 50 0 Z" fill={color} />
+    </svg>
+  );
+}
+
+function HeartIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 22 22">
+      <path
+        d="M11 19 C3 13 1 9 4 6 C6 4 9 5 11 8 C13 5 16 4 18 6 C21 9 19 13 11 19Z"
+        fill={filled ? T.terra : 'none'}
+        stroke={filled ? T.terra : T.ink3}
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+function BackArrow() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M11 4L6 9L11 14" stroke={T.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function CircleBtn({ children, onClick, style }: { children: React.ReactNode; onClick?: () => void; style?: React.CSSProperties }) {
+  return (
+    <button onClick={onClick} style={{
+      width: 36, height: 36, borderRadius: 999,
+      background: 'rgba(43,24,16,0.06)', border: 'none', cursor: 'pointer',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      ...style,
+    }}>
+      {children}
+    </button>
+  );
+}
+
+// ── Component ─────────────────────────────────────────────────────────
 function ActivityDetail() {
   const { id } = Route.useParams();
   const { profile, update } = useProfile();
@@ -36,9 +95,9 @@ function ActivityDetail() {
 
   if (!activity) {
     return (
-      <main className="min-h-screen bg-background p-6 pt-16">
-        <p className="text-muted-foreground">Couldn't find that one.</p>
-        <Link to="/" className="text-primary underline mt-4 inline-block">Back home</Link>
+      <main style={{ minHeight: '100svh', background: T.cream, padding: '64px 24px 24px' }}>
+        <p style={{ fontFamily: T.body, color: T.ink3 }}>Couldn't find that one.</p>
+        <a href="/" style={{ color: T.terra, fontFamily: T.body, marginTop: 16, display: 'inline-block' }}>Back home</a>
       </main>
     );
   }
@@ -49,7 +108,7 @@ function ActivityDetail() {
     update((p) => ({
       ...p,
       saved: isSaved
-        ? (p.saved ?? []).filter((id) => id !== activity.id)
+        ? (p.saved ?? []).filter((sid) => sid !== activity.id)
         : [...(p.saved ?? []), activity.id],
     }));
   };
@@ -67,88 +126,168 @@ function ActivityDetail() {
   };
 
   return (
-    <main className="min-h-screen bg-background pb-56">
-      <header className="px-6 pt-12 flex items-center justify-between">
-        <button onClick={() => navigate({ to: "/" })} className="p-2 -ml-2 rounded-full hover:bg-muted" aria-label="Back">
-          <ArrowLeft className="w-5 h-5" />
+    <main style={{ minHeight: '100svh', background: T.cream, paddingBottom: 128 }}>
+      {/* Header */}
+      <header style={{ padding: '48px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <CircleBtn onClick={() => navigate({ to: "/" })}>
+          <BackArrow />
+        </CircleBtn>
+        <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.ink3 }}>
+          your spark
+        </span>
+        <CircleBtn onClick={toggleSave} style={{ background: isSaved ? 'rgba(196,101,74,0.12)' : 'rgba(43,24,16,0.06)' }}>
+          <HeartIcon filled={isSaved} />
+        </CircleBtn>
+      </header>
+
+      {/* Hero block */}
+      <div style={{ margin: '16px 22px 0', position: 'relative', height: 220, borderRadius: 28, overflow: 'hidden', background: T.terra }}>
+        {/* Mustard sun */}
+        <div style={{ position: 'absolute', top: -40, left: -50, width: 160, height: 160, borderRadius: '50%', background: T.mustard }}/>
+        {/* Plum bottom-right */}
+        <div style={{ position: 'absolute', bottom: -60, right: -30, width: 180, height: 180, borderRadius: '50%', background: T.plum }}/>
+        {/* Spark glyph */}
+        <SparkGlyph size={52} color="rgba(255,251,243,0.85)" style={{ position: 'absolute', top: 22, right: 22 }}/>
+        {/* Wavy line decoration */}
+        <svg width="220" height="50" viewBox="0 0 220 50" style={{ position: 'absolute', top: 120, left: 22 }}>
+          <path d="M0 25 Q 27 0, 55 25 T 110 25 T 165 25 T 220 25" stroke="rgba(255,251,243,0.4)" strokeWidth="4" fill="none" strokeLinecap="round"/>
+        </svg>
+        {/* Meta strip */}
+        <div style={{
+          position: 'absolute', bottom: 18, left: 24, right: 24,
+          fontFamily: T.mono, fontSize: 10, letterSpacing: '0.16em',
+          textTransform: 'uppercase', color: 'rgba(255,251,243,0.75)',
+          display: 'flex', justifyContent: 'space-between',
+        }}>
+          <span>{activity.time} min</span>
+          <span>{activity.energy} energy</span>
+          <span>{activity.location}</span>
+        </div>
+      </div>
+
+      {/* Activity title */}
+      <div style={{ padding: '20px 24px 0' }}>
+        <h1 style={{
+          fontFamily: T.display, fontSize: 36, lineHeight: 0.92,
+          fontWeight: 700, letterSpacing: '-0.04em', color: T.ink, margin: 0,
+        }}>
+          {activity.title}.
+        </h1>
+        <p style={{ fontFamily: T.body, fontSize: 15, color: T.ink2, marginTop: 12, lineHeight: 1.5 }}>
+          {activity.blurb}
+        </p>
+      </div>
+
+      {/* Materials */}
+      <div style={{ padding: '24px 24px 0' }}>
+        <div style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.ink3, marginBottom: 10 }}>
+          You'll need
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {activity.needs.map((n, i) => (
+            <span key={n} style={{
+              padding: '6px 12px', borderRadius: 999,
+              background: i === 0 ? 'rgba(196,101,74,0.12)' : i === 1 ? 'rgba(43,24,16,0.06)' : 'transparent',
+              border: i >= 2 ? `1px solid ${T.border}` : 'none',
+              color: i === 0 ? '#9F4A30' : T.ink2,
+              fontFamily: T.body, fontSize: 13, fontWeight: 500,
+            }}>
+              {n}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Steps */}
+      <div style={{ padding: '28px 24px 0' }}>
+        <div style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.ink3, marginBottom: 20 }}>
+          How to do it
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {activity.steps.map((s, i) => (
+            <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+              <div style={{
+                fontFamily: T.display, fontSize: 32, fontWeight: 700,
+                color: T.terra, lineHeight: 1, letterSpacing: '-0.03em',
+                flexShrink: 0, minWidth: 28,
+              }}>
+                {i + 1}
+              </div>
+              <div style={{ flex: 1, paddingTop: 5 }}>
+                <div style={{
+                  fontFamily: T.display, fontSize: 17, fontWeight: 600,
+                  color: T.ink, letterSpacing: '-0.015em', lineHeight: 1.2,
+                }}>
+                  {s}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sibling tip */}
+      {profile.children.length >= 2 && activity.siblingTip && (
+        <div style={{ margin: '28px 24px 0', padding: 18, borderRadius: 22, background: 'rgba(122,142,109,0.18)', border: '1px solid rgba(122,142,109,0.3)' }}>
+          <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4D5E40', marginBottom: 6 }}>
+            Sibling mode
+          </div>
+          <p style={{ fontFamily: T.body, fontSize: 14, color: '#3A4D2E', lineHeight: 1.5, margin: 0 }}>
+            {activity.siblingTip}
+          </p>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: 'rgba(251,244,234,0.95)', backdropFilter: 'blur(12px)',
+        borderTop: `1px solid ${T.border}`,
+        padding: '12px 22px 32px',
+        display: 'flex', flexDirection: 'column', gap: 8,
+      }}>
+        <button
+          onClick={markDone}
+          style={{
+            width: '100%', padding: '18px 22px', borderRadius: 999,
+            background: doneFlash ? T.sage : T.ink,
+            color: T.paper,
+            fontFamily: T.display, fontWeight: 600, fontSize: 18,
+            letterSpacing: '-0.01em', border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            transition: 'background 0.3s',
+            boxShadow: '0 8px 20px rgba(43,24,16,0.25)',
+          }}
+        >
+          <span>{doneFlash ? "Logged ✓" : "We did this!"}</span>
+          {!doneFlash && <span style={{ fontSize: 22 }}>→</span>}
         </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleSave}
-            className="p-2 rounded-full hover:bg-muted transition-colors"
-            aria-label={isSaved ? "Remove bookmark" : "Save activity"}
-          >
-            <Bookmark className={`w-5 h-5 ${isSaved ? "fill-primary text-primary" : "text-muted-foreground"}`} />
-          </button>
+        <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={tryAnother}
             disabled={regenerating}
-            className="text-sm text-muted-foreground inline-flex items-center gap-1 disabled:opacity-50"
+            style={{
+              flex: 1, padding: '14px 16px', borderRadius: 999,
+              background: T.paper, color: T.ink,
+              border: `1px solid ${T.border}`,
+              fontFamily: T.body, fontWeight: 500, fontSize: 14,
+              cursor: 'pointer', opacity: regenerating ? 0.5 : 1,
+            }}
           >
-            <RefreshCw className={`w-4 h-4 ${regenerating ? "animate-spin" : ""}`} />
-            {regenerating ? "Finding…" : "Try another"}
+            {regenerating ? 'Finding…' : '↻ Try another'}
           </button>
-        </div>
-      </header>
-
-      <section className="px-6 pt-6">
-        <div className="inline-flex items-center gap-2 rounded-full bg-sage/30 px-3 py-1 text-xs font-medium text-sage-foreground">
-          <Clock className="w-3 h-3" /> {activity.time} min · {activity.energy} energy · {activity.location}
-        </div>
-        <h1 className="text-3xl font-display font-semibold leading-tight mt-4">
-          {activity.title}
-        </h1>
-        <p className="text-muted-foreground mt-3 leading-relaxed">{activity.blurb}</p>
-      </section>
-
-      <section className="px-6 mt-8">
-        <h2 className="font-display text-lg font-semibold flex items-center gap-2">
-          <ShoppingBag className="w-4 h-4" /> What you'll need
-        </h2>
-        <ul className="mt-3 space-y-2">
-          {activity.needs.map((n) => (
-            <li key={n} className="flex items-center gap-3 rounded-xl bg-card border border-border px-4 py-3 text-sm">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary/40 flex-shrink-0" />
-              <span>{n}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="px-6 mt-8">
-        <h2 className="font-display text-lg font-semibold">How to do it</h2>
-        <ol className="mt-3 space-y-3">
-          {activity.steps.map((s, i) => (
-            <li key={i} className="flex gap-3">
-              <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                {i + 1}
-              </div>
-              <p className="text-sm leading-relaxed pt-0.5">{s}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {profile.children.length >= 2 && (
-        <section className="px-6 mt-8">
-          <div className="rounded-2xl bg-sage/25 border border-sage/40 p-5">
-            <h2 className="font-display text-base font-semibold flex items-center gap-2 text-sage-foreground">
-              <Users className="w-4 h-4" /> Sibling mode
-            </h2>
-            <p className="text-sm mt-2 leading-relaxed text-sage-foreground/90">
-              {activity.siblingTip}
-            </p>
-          </div>
-        </section>
-      )}
-
-      <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-6 py-4">
-        <div className="max-w-md mx-auto">
           <button
-            onClick={markDone}
-            className="w-full rounded-full py-3 text-sm font-semibold bg-sage text-sage-foreground transition-colors"
+            onClick={toggleSave}
+            style={{
+              flex: 1, padding: '14px 16px', borderRadius: 999,
+              background: isSaved ? 'rgba(196,101,74,0.12)' : T.paper,
+              color: isSaved ? T.terra : T.ink,
+              border: `1px solid ${isSaved ? 'rgba(196,101,74,0.3)' : T.border}`,
+              fontFamily: T.body, fontWeight: 500, fontSize: 14,
+              cursor: 'pointer',
+            }}
           >
-            {doneFlash ? "Logged ✓" : "We did this! ✅"}
+            {isSaved ? '♡ Saved' : '♡ Save'}
           </button>
         </div>
       </footer>
