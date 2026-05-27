@@ -32,62 +32,97 @@
   --color-ring: var(--ring);
   --color-sage: var(--sage);
   --color-sage-foreground: var(--sage-foreground);
-  --color-clay: var(--clay);
-  --color-clay-foreground: var(--clay-foreground);
+  --color-mustard: var(--mustard);
+  --color-mustard-foreground: var(--mustard-foreground);
   --color-cream: var(--cream);
-  --font-display: "Fraunces", Georgia, serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
+  --color-cream-deep: var(--cream-deep);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-ink3: var(--ink3);
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-sans: "Inter Tight", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 :root {
-  --radius: 1.25rem;
-  /* Warm cream background */
-  --background: oklch(0.97 0.018 75);
-  --foreground: oklch(0.25 0.03 40);
+  --radius: 1.375rem;
 
-  --card: oklch(0.99 0.012 80);
-  --card-foreground: oklch(0.25 0.03 40);
-  --popover: oklch(0.99 0.012 80);
-  --popover-foreground: oklch(0.25 0.03 40);
+  /* Spark palette */
+  --cream:       #FBF4EA;
+  --cream-deep:  #F2E4CB;
+  --paper:       #FFFBF3;
+  --ink:         #2B1810;
+  --ink2:        #5C463A;
+  --ink3:        #8B7567;
+  --terra:       #C4654A;
+  --terra-deep:  #9F4A30;
+  --mustard:     #E8A33A;
+  --mustard-foreground: #7B5417;
+  --sage:        #7A8E6D;
+  --sage-foreground: #2B1810;
+  --plum:        #5E3A4F;
 
-  /* Terracotta primary */
-  --primary: oklch(0.62 0.14 38);
-  --primary-foreground: oklch(0.98 0.01 80);
+  --background: #FBF4EA;
+  --foreground: #2B1810;
 
-  /* Sage green */
-  --sage: oklch(0.68 0.06 145);
-  --sage-foreground: oklch(0.22 0.03 145);
+  --card: #FFFBF3;
+  --card-foreground: #2B1810;
+  --popover: #FFFBF3;
+  --popover-foreground: #2B1810;
 
-  /* Clay (deep terracotta) */
-  --clay: oklch(0.48 0.12 35);
-  --clay-foreground: oklch(0.98 0.01 80);
+  --primary: #C4654A;
+  --primary-foreground: #FFFBF3;
 
-  --cream: oklch(0.94 0.025 80);
+  --secondary: #F2E4CB;
+  --secondary-foreground: #2B1810;
 
-  --secondary: oklch(0.92 0.03 75);
-  --secondary-foreground: oklch(0.30 0.04 40);
-  --muted: oklch(0.93 0.022 78);
-  --muted-foreground: oklch(0.48 0.03 45);
-  --accent: oklch(0.85 0.06 80);
-  --accent-foreground: oklch(0.25 0.04 40);
+  --muted: #F2E4CB;
+  --muted-foreground: #8B7567;
+
+  --accent: #E8A33A;
+  --accent-foreground: #2B1810;
+
   --destructive: oklch(0.55 0.20 28);
-  --destructive-foreground: oklch(0.98 0.01 80);
-  --border: oklch(0.88 0.02 70);
-  --input: oklch(0.90 0.02 70);
-  --ring: oklch(0.62 0.14 38);
+  --destructive-foreground: #FFFBF3;
+
+  --border: rgba(43,24,16,0.10);
+  --input: rgba(43,24,16,0.08);
+  --ring: #C4654A;
+}
+
+@keyframes sparkSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body { background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  html, body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.03em; }
 }
 
 @layer utilities {
-  .font-display { font-family: var(--font-display); }
-  .bg-cream { background-color: var(--cream); }
-  .bg-sage { background-color: var(--sage); }
-  .text-sage { color: var(--sage); }
-  .bg-clay { background-color: var(--clay); }
-  .text-clay { color: var(--clay); }
+  .font-display  { font-family: var(--font-display); }
+  .font-mono     { font-family: var(--font-mono); }
+  .bg-cream      { background-color: var(--cream); }
+  .bg-cream-deep { background-color: var(--cream-deep); }
+  .bg-sage       { background-color: var(--sage); }
+  .text-sage     { color: var(--sage); }
+  .bg-mustard    { background-color: var(--mustard); }
+  .text-mustard  { color: var(--mustard); }
+  .bg-ink        { background-color: var(--ink); }
+  .text-ink      { color: var(--ink); }
+  .text-ink2     { color: var(--ink2); }
+  .text-ink3     { color: var(--ink3); }
+  .animate-spark-spin { animation: sparkSpin 2.4s linear infinite; }
+  .animate-pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
 }

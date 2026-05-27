@@ -1,20 +1,38 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useProfile, PANTRY_CATEGORIES } from "@/lib/store";
 import { pickActivity } from "@/lib/activities";
 import { generateActivity, cacheActivity, getRecentTitles, addRecentTitle, saveLastInputs } from "@/lib/generate-activity";
-import { ArrowLeft, Battery, BatteryMedium, BatteryFull, Clock, Home, Trees, ArrowRight, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/right-now")({
   component: RightNow,
 });
 
+// ── Spark design tokens ───────────────────────────────────────────────
+const T = {
+  cream:   '#FBF4EA',
+  paper:   '#FFFBF3',
+  ink:     '#2B1810',
+  ink2:    '#5C463A',
+  ink3:    '#8B7567',
+  terra:   '#C4654A',
+  mustard: '#E8A33A',
+  sage:    '#7A8E6D',
+  plum:    '#5E3A4F',
+  border:  'rgba(43,24,16,0.10)',
+  display: '"Bricolage Grotesque", system-ui, sans-serif',
+  body:    '"Inter Tight", system-ui, sans-serif',
+  mono:    '"JetBrains Mono", ui-monospace, monospace',
+} as const;
+
+// ── Types ─────────────────────────────────────────────────────────────
 type Energy = "low" | "medium" | "high";
 type Time = 10 | 30 | 60;
 type Loc = "inside" | "outside";
 
 const TOTAL_STEPS = 4;
 
+// ── Main component ────────────────────────────────────────────────────
 function RightNow() {
   const { profile } = useProfile();
   const navigate = useNavigate();
@@ -67,96 +85,188 @@ function RightNow() {
     }
   };
 
+  // ── Loading screen ──────────────────────────────────────────────────
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 px-6">
-        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
-          <Sparkles className="w-6 h-6 text-primary" />
+      <main style={{ minHeight: '100svh', background: T.ink, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+        <SparkleCluster color={T.mustard} style={{ position: 'absolute', top: 110, left: 36 }}/>
+        <SparkleCluster color={T.terra}   style={{ position: 'absolute', top: 80,  right: 24, transform: 'rotate(15deg)' }}/>
+        <SparkleCluster color={T.sage}    style={{ position: 'absolute', bottom: 200, left: 28, transform: 'rotate(-12deg)' }}/>
+        <SparkleCluster color={T.mustard} style={{ position: 'absolute', bottom: 240, right: 40 }}/>
+
+        <SparkGlyph
+          size={180}
+          color={T.terra}
+          style={{ filter: 'drop-shadow(0 0 40px rgba(196,101,74,0.4))', animation: 'sparkSpin 2.4s linear infinite' }}
+        />
+
+        <div style={{ marginTop: 36, textAlign: 'center' }}>
+          <div style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,251,243,0.5)' }}>
+            sparking…
+          </div>
+          <div style={{ fontFamily: T.display, fontSize: 26, fontWeight: 600, letterSpacing: '-0.02em', marginTop: 10, color: T.paper, lineHeight: 1.1, maxWidth: 280, padding: '0 20px' }}>
+            Mixing your answers<br/>with 247 ideas
+          </div>
         </div>
-        <p className="font-display text-xl font-semibold text-center">Finding the perfect idea…</p>
-        <p className="text-sm text-muted-foreground text-center">One moment.</p>
       </main>
     );
   }
 
+  // ── Quiz shell ──────────────────────────────────────────────────────
   return (
-    <main className="min-h-screen bg-background pb-12">
-      <header className="px-6 pt-12 flex items-center justify-between">
-        <Link to="/" className="p-2 -ml-2 rounded-full hover:bg-muted" aria-label="Back">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div className="flex gap-1.5">
-          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 w-7 rounded-full ${i <= step ? "bg-primary" : "bg-muted"}`}
-            />
-          ))}
-        </div>
-        <div className="w-9" />
+    <main style={{ minHeight: '100svh', background: T.cream, paddingBottom: 48 }}>
+      {/* Header */}
+      <header style={{ padding: '48px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <CircleBtn onClick={() => navigate({ to: "/" })}>
+          <BackArrow />
+        </CircleBtn>
+        <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.ink3 }}>
+          question {step + 1} of {TOTAL_STEPS}
+        </span>
+        <div style={{ width: 36 }} />
       </header>
 
-      <section className="px-6 pt-10">
-        {step === 0 && (
-          <Question title="What's your energy?" subtitle="Be honest. There's a right idea for every mood.">
-            <Choice icon={<Battery className="w-6 h-6" />} label="Low" hint="I'm folding laundry" onClick={() => onPick(setEnergy, "low")} />
-            <Choice icon={<BatteryMedium className="w-6 h-6" />} label="Medium" hint="I'm up for setup" onClick={() => onPick(setEnergy, "medium")} />
-            <Choice icon={<BatteryFull className="w-6 h-6" />} label="High" hint="Let's get loud" onClick={() => onPick(setEnergy, "high")} />
-          </Question>
-        )}
+      {/* Progress dots */}
+      <div style={{ padding: '10px 24px 0', display: 'flex', gap: 6 }}>
+        {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+          <div key={i} style={{
+            height: 6,
+            width: i <= step ? 22 : 6,
+            borderRadius: 999,
+            background: i <= step ? T.terra : 'rgba(43,24,16,0.15)',
+            transition: 'width 0.25s ease',
+          }}/>
+        ))}
+      </div>
 
-        {step === 1 && (
-          <Question title="How much time?" subtitle="Counting from right now.">
-            <Choice icon={<Clock className="w-6 h-6" />} label="10 minutes" hint="A quick reset" onClick={() => onPick(setTime, 10)} />
-            <Choice icon={<Clock className="w-6 h-6" />} label="30 minutes" hint="Real activity" onClick={() => onPick(setTime, 30)} />
-            <Choice icon={<Clock className="w-6 h-6" />} label="1 hour +" hint="Settle in" onClick={() => onPick(setTime, 60)} />
-          </Question>
-        )}
-
-        {step === 2 && (
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 pb-28">
-            <h1 className="text-3xl font-display font-semibold leading-tight">What do you have?</h1>
-            <p className="text-muted-foreground mt-2">Pick everything that applies.</p>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              {PANTRY_CATEGORIES.map((cat) => {
-                const selected = categories.includes(cat.id);
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => toggleCategory(cat.id)}
-                    className={`flex flex-col items-start gap-1.5 rounded-2xl p-3 border text-left transition-colors active:scale-[0.98] ${
-                      selected
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-card border-border hover:border-foreground/20"
-                    }`}
-                  >
-                    <span className="text-2xl">{cat.emoji}</span>
-                    <p className="font-display font-semibold text-sm leading-tight">{cat.label}</p>
-                    <p className={`text-xs leading-snug ${selected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                      {cat.description}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+      {/* Step 0 — Energy */}
+      {step === 0 && (
+        <section style={{ padding: '24px 24px 0' }}>
+          <QuizTitle title={<>What's your<br/>energy?</>} subtitle="Be honest. There's a right idea for every mood." />
+          <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <ChoiceCard
+              tone={T.sage}
+              icon={<EnergyGlyph level="Low" />}
+              label="Low"
+              hint="Couch-bound"
+              onClick={() => onPick(setEnergy, "low")}
+            />
+            <ChoiceCard
+              tone={T.mustard}
+              icon={<EnergyGlyph level="Medium" />}
+              label="Medium"
+              hint="I'm up for setup"
+              onClick={() => onPick(setEnergy, "medium")}
+            />
+            <ChoiceCard
+              tone={T.terra}
+              icon={<EnergyGlyph level="High" />}
+              label="High"
+              hint="Let's get loud"
+              onClick={() => onPick(setEnergy, "high")}
+            />
           </div>
-        )}
+        </section>
+      )}
 
-        {step === 3 && (
-          <Question title="Inside or outside?" subtitle="">
-            <Choice icon={<Home className="w-6 h-6" />} label="Inside" hint="Living room or kitchen" onClick={() => { setLoc("inside"); finish("inside"); }} />
-            <Choice icon={<Trees className="w-6 h-6" />} label="Outside" hint="Yard, balcony, park" onClick={() => { setLoc("outside"); finish("outside"); }} />
-          </Question>
-        )}
-      </section>
+      {/* Step 1 — Time */}
+      {step === 1 && (
+        <section style={{ padding: '24px 24px 0' }}>
+          <QuizTitle title={<>How much<br/>time?</>} subtitle="Counting from right now." />
+          <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <ChoiceCard
+              tone={T.sage}
+              icon={<ClockGlyph mins={10} />}
+              label="10 minutes"
+              hint="A quick reset"
+              onClick={() => onPick(setTime, 10)}
+            />
+            <ChoiceCard
+              tone={T.mustard}
+              icon={<ClockGlyph mins={30} />}
+              label="30 minutes"
+              hint="Real activity"
+              onClick={() => onPick(setTime, 30)}
+            />
+            <ChoiceCard
+              tone={T.terra}
+              icon={<ClockGlyph mins={60} />}
+              label="1 hour +"
+              hint="Settle in"
+              onClick={() => onPick(setTime, 60)}
+            />
+          </div>
+        </section>
+      )}
 
+      {/* Step 2 — Pantry */}
       {step === 2 && (
-        <footer className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-6 py-4">
+        <section style={{ padding: '24px 24px 0', paddingBottom: 96 }}>
+          <QuizTitle title={<>What do<br/>you have?</>} subtitle="Pick everything that applies." />
+          <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            {PANTRY_CATEGORIES.map((cat) => {
+              const selected = categories.includes(cat.id);
+              const tone = PANTRY_TONES[cat.id] ?? T.sage;
+              return (
+                <PantryCard
+                  key={cat.id}
+                  emoji={cat.emoji}
+                  label={cat.label}
+                  desc={cat.description}
+                  tone={tone}
+                  selected={selected}
+                  onClick={() => toggleCategory(cat.id)}
+                />
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Step 3 — Location */}
+      {step === 3 && (
+        <section style={{ padding: '24px 24px 0' }}>
+          <QuizTitle title={<>Inside or<br/>outside?</>} />
+          <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <ChoiceCard
+              tone={T.mustard}
+              icon={<HouseIcon />}
+              label="Inside"
+              hint="Keep the mess contained"
+              onClick={() => { setLoc("inside"); finish("inside"); }}
+            />
+            <ChoiceCard
+              tone={T.sage}
+              icon={<TreeIcon />}
+              label="Outside"
+              hint="Let them go feral"
+              onClick={() => { setLoc("outside"); finish("outside"); }}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* Step 2 footer — continue button */}
+      {step === 2 && (
+        <footer style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0,
+          background: 'rgba(251,244,234,0.95)', backdropFilter: 'blur(12px)',
+          borderTop: `1px solid ${T.border}`,
+          padding: '12px 22px 32px',
+        }}>
           <button
             onClick={() => setStep(3)}
-            className="w-full max-w-md mx-auto flex rounded-full py-3 text-sm font-semibold bg-primary text-primary-foreground items-center justify-center gap-2"
+            style={{
+              width: '100%', padding: '18px 22px', borderRadius: 999,
+              background: T.ink, color: T.paper,
+              fontFamily: T.display, fontWeight: 600, fontSize: 18,
+              letterSpacing: '-0.01em', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              boxShadow: '0 8px 20px rgba(43,24,16,0.3)',
+            }}
           >
-            Continue <ArrowRight className="w-4 h-4" />
+            <span>Continue</span>
+            <span style={{ fontSize: 22 }}>→</span>
           </button>
         </footer>
       )}
@@ -164,30 +274,210 @@ function RightNow() {
   );
 }
 
-function Question({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+// ── Design tokens for pantry categories ──────────────────────────────
+const PANTRY_TONES: Record<string, string> = {
+  kitchen:   '#E8A33A', // mustard
+  art:       '#C4654A', // terra
+  building:  '#7A8E6D', // sage
+  outdoor:   '#7A8E6D', // sage
+  toys:      '#E8A33A', // mustard
+  water:     '#7A8E6D', // sage
+  household: '#5E3A4F', // plum
+  nothing:   '#C4654A', // terra
+};
+
+// ── SVG atoms ─────────────────────────────────────────────────────────
+
+function SparkGlyph({ size = 24, color = T.ink, style }: { size?: number; color?: string; style?: React.CSSProperties }) {
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <h1 className="text-3xl font-display font-semibold leading-tight">{title}</h1>
-      {subtitle && <p className="text-muted-foreground mt-2">{subtitle}</p>}
-      <div className="mt-8 space-y-3">{children}</div>
+    <svg width={size} height={size} viewBox="0 0 100 100" style={style}>
+      <path d="M50 0 C52 32 68 48 100 50 C68 52 52 68 50 100 C48 68 32 52 0 50 C32 48 48 32 50 0 Z" fill={color} />
+    </svg>
+  );
+}
+
+function SparkleCluster({ color = T.mustard, style }: { color?: string; style?: React.CSSProperties }) {
+  return (
+    <svg width={88} height={64} viewBox="0 0 88 64" style={style}>
+      <path d="M16 0 C17 14 24 21 38 22 C24 23 17 30 16 44 C15 30 8 23 -6 22 C8 21 15 14 16 0 Z" fill={color}/>
+      <path d="M70 22 C70.6 30 75 34 83 34.5 C75 35 70.6 39 70 47 C69.4 39 65 35 57 34.5 C65 34 69.4 30 70 22 Z" fill={color} opacity={0.85}/>
+      <circle cx="52" cy="8" r="3" fill={color} opacity={0.7}/>
+    </svg>
+  );
+}
+
+function EnergyGlyph({ level }: { level: string }) {
+  const filled = level === 'Low' ? 1 : level === 'Medium' ? 2 : 3;
+  const bars = [10, 16, 22];
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 24 }}>
+      {bars.map((h, i) => (
+        <div key={i} style={{ width: 6, height: h, borderRadius: 2, background: T.ink, opacity: i < filled ? 1 : 0.22 }}/>
+      ))}
     </div>
   );
 }
 
-function Choice({ icon, label, hint, onClick }: { icon: React.ReactNode; label: string; hint: string; onClick: () => void }) {
+function ClockGlyph({ mins }: { mins: number }) {
+  const angle = mins === 10 ? -60 : mins === 30 ? 90 : 180;
+  return (
+    <svg width="26" height="26" viewBox="0 0 26 26">
+      <circle cx="13" cy="13" r="11" fill="none" stroke={T.ink} strokeWidth="2"/>
+      <line x1="13" y1="13" x2="13" y2="5" stroke={T.ink} strokeWidth="2.2" strokeLinecap="round"/>
+      <line x1="13" y1="13" x2="13" y2="7" stroke={T.ink} strokeWidth="2.2" strokeLinecap="round"
+        transform={`rotate(${angle} 13 13)`}/>
+      <circle cx="13" cy="13" r="1.6" fill={T.ink}/>
+    </svg>
+  );
+}
+
+function HouseIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 30 30">
+      <path d="M4 14 L15 4 L26 14 V25 H4 Z" fill={T.ink}/>
+      <rect x="12" y="17" width="6" height="8" fill="rgba(255,251,243,0.7)"/>
+    </svg>
+  );
+}
+
+function TreeIcon() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 30 30">
+      <circle cx="15" cy="12" r="9" fill={T.ink}/>
+      <rect x="13" y="18" width="4" height="9" fill={T.ink}/>
+    </svg>
+  );
+}
+
+function BackArrow() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M11 4L6 9L11 14" stroke={T.ink} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+// ── Shared layout atoms ───────────────────────────────────────────────
+
+function CircleBtn({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      width: 36, height: 36, borderRadius: 999,
+      background: 'rgba(43,24,16,0.06)', border: 'none', cursor: 'pointer',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      {children}
+    </button>
+  );
+}
+
+function QuizTitle({ title, subtitle }: { title: React.ReactNode; subtitle?: string }) {
+  return (
+    <div style={{ animation: 'fadeIn 0.25s ease' }}>
+      <h2 style={{
+        fontFamily: T.display, fontSize: 52, lineHeight: 0.9,
+        fontWeight: 700, letterSpacing: '-0.04em', color: T.ink, margin: 0,
+      }}>{title}</h2>
+      {subtitle && (
+        <p style={{ fontFamily: T.body, fontSize: 15, color: T.ink2, marginTop: 14, lineHeight: 1.4 }}>
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ChoiceCard({ tone, icon, label, hint, onClick }: {
+  tone: string;
+  icon: React.ReactNode;
+  label: string;
+  hint: string;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-4 rounded-2xl bg-card border border-border p-5 text-left hover:border-primary hover:bg-cream transition-colors active:scale-[0.99]"
+      style={{
+        appearance: 'none', border: `1px solid ${T.border}`, cursor: 'pointer',
+        width: '100%', padding: '18px 22px', borderRadius: 22,
+        background: T.paper, textAlign: 'left',
+        display: 'flex', alignItems: 'center', gap: 18,
+        transition: 'transform 0.12s ease',
+      }}
+      onTouchStart={(e) => (e.currentTarget.style.transform = 'scale(0.99)')}
+      onTouchEnd={(e) => (e.currentTarget.style.transform = 'scale(1)')}
     >
-      <div className="w-12 h-12 rounded-full bg-cream text-clay flex items-center justify-center">
+      <div style={{
+        width: 52, height: 52, borderRadius: 16,
+        background: tone,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>
         {icon}
       </div>
-      <div className="flex-1">
-        <p className="font-display text-xl font-semibold leading-none">{label}</p>
-        <p className="text-sm text-muted-foreground mt-1">{hint}</p>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontFamily: T.display, fontWeight: 700, fontSize: 24, color: T.ink, lineHeight: 1, letterSpacing: '-0.02em' }}>
+          {label}
+        </div>
+        <div style={{ fontFamily: T.body, fontSize: 13.5, color: T.ink2, marginTop: 4 }}>{hint}</div>
       </div>
-      <ArrowRight className="w-5 h-5 text-muted-foreground" />
+      <span style={{ color: T.ink3, fontSize: 22 }}>→</span>
+    </button>
+  );
+}
+
+function PantryCard({ emoji, label, desc, tone, selected, onClick }: {
+  emoji: string;
+  label: string;
+  desc: string;
+  tone: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        appearance: 'none', cursor: 'pointer', textAlign: 'left',
+        padding: 14, borderRadius: 20, minHeight: 140,
+        background: selected ? T.ink : T.paper,
+        border: `1px solid ${selected ? T.ink : T.border}`,
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+        position: 'relative', transition: 'background 0.15s',
+      }}
+    >
+      <div style={{
+        width: 40, height: 40, borderRadius: 12,
+        background: selected ? 'rgba(255,251,243,0.15)' : tone,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 22,
+      }}>
+        {emoji}
+      </div>
+      <div>
+        <div style={{
+          fontFamily: T.display, fontWeight: 700, fontSize: 15,
+          color: selected ? T.paper : T.ink, lineHeight: 1.1, letterSpacing: '-0.01em',
+        }}>
+          {label}
+        </div>
+        <div style={{
+          fontFamily: T.body, fontSize: 11.5,
+          color: selected ? 'rgba(255,251,243,0.65)' : T.ink3,
+          lineHeight: 1.3, marginTop: 3,
+        }}>
+          {desc}
+        </div>
+      </div>
+      {selected && (
+        <div style={{
+          position: 'absolute', top: 12, right: 12,
+          width: 20, height: 20, borderRadius: '50%',
+          background: T.paper, color: T.ink,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 11, fontWeight: 800,
+        }}>✓</div>
+      )}
     </button>
   );
 }
