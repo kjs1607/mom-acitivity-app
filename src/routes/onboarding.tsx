@@ -48,7 +48,7 @@ function Onboarding() {
 
   const finish = (list: Child[]) => {
     update({ children: list, onboarded: true });
-    navigate({ to: "/" });
+    navigate({ to: "/right-now" });
   };
 
   return (
