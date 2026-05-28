@@ -131,36 +131,10 @@ function Index() {
         </div>
       )}
 
-      {/* Quick tiles */}
-      <div style={{ padding: '28px 24px 0' }}>
-        <h2 style={{ fontFamily: T.display, fontSize: 19, fontWeight: 600, color: T.ink, margin: 0, letterSpacing: '-0.01em' }}>Quick</h2>
-        <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <Link to="/right-now" style={{ textDecoration: 'none' }}>
-            <QuickTile emoji="⚡" label="Right now" />
-          </Link>
-          <Link to="/settings" style={{ textDecoration: 'none' }}>
-            <QuickTile emoji="⚙️" label="Settings" />
-          </Link>
-        </div>
-      </div>
-
       {/* Footer */}
       <p style={{ textAlign: 'center', fontFamily: T.body, fontSize: 12, color: T.ink3, padding: '40px 24px 0', margin: 0 }}>
         Built for parents who'd rather play than scroll.
       </p>
     </main>
-  );
-}
-
-function QuickTile({ emoji, label }: { emoji: string; label: string }) {
-  return (
-    <div style={{
-      padding: '14px 16px', borderRadius: 18,
-      background: T.paper, border: `1px solid ${T.border}`,
-      display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer',
-    }}>
-      <span style={{ fontSize: 22 }}>{emoji}</span>
-      <span style={{ fontFamily: T.body, fontSize: 14, fontWeight: 600, color: T.ink }}>{label}</span>
-    </div>
   );
 }

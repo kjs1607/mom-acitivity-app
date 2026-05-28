@@ -54,7 +54,9 @@ function Onboarding() {
             Hi. Let's keep this short.
           </h1>
           <p style={{ fontFamily: T.body, fontSize: 15, color: T.ink2, margin: '14px 0 0', lineHeight: 1.5 }}>
-            No account. No email. Just a few quick steps so we can find the right idea for your family.
+            Real activity ideas that fit your{' '}
+          <span style={{ color: T.terra, fontWeight: 600 }}>kid</span>, your{' '}
+          <span style={{ color: T.terra, fontWeight: 600 }}>hour</span>, and your stuff.
           </p>
           <div style={{ marginTop: 28, padding: '20px 22px', borderRadius: 22, background: T.paper, border: `1px solid ${T.border}` }}>
             <p style={{ fontFamily: T.display, fontSize: 20, fontWeight: 600, color: T.ink, margin: 0, lineHeight: 1.2 }}>
