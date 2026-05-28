@@ -242,10 +242,7 @@ function ActivityDetail() {
 
       {/* Footer */}
       <footer style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'rgba(251,244,234,0.95)', backdropFilter: 'blur(12px)',
-        borderTop: `1px solid ${T.border}`,
-        padding: '12px 22px 32px',
+        padding: '16px 22px 48px',
         display: 'flex', flexDirection: 'column', gap: 8,
       }}>
         <button
