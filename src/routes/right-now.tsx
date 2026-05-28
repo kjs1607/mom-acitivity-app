@@ -88,6 +88,15 @@ function RightNow() {
   };
 
   // ── Loading screen ──────────────────────────────────────────────────
+  const LOADING_LINES = [
+    "Finding the one idea built for right now.",
+    "Sorting through the chaos so you don't have to.",
+    "Eliminating all activities that require 48 hours of drying time.",
+    "Ruling out everything that ends in a meltdown.",
+    "Not Pinterest. Not a list. Just one thing.",
+  ];
+  const loadingLine = LOADING_LINES[Math.floor(Date.now() / 1000) % LOADING_LINES.length];
+
   if (loading) {
     return (
       <main style={{ minHeight: '100svh', background: T.ink, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
@@ -106,8 +115,8 @@ function RightNow() {
           <div style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,251,243,0.5)' }}>
             sparking…
           </div>
-          <div style={{ fontFamily: T.display, fontSize: 26, fontWeight: 600, letterSpacing: '-0.02em', marginTop: 10, color: T.paper, lineHeight: 1.1, maxWidth: 280, padding: '0 20px' }}>
-            Mixing your answers<br/>with 247 ideas
+          <div style={{ fontFamily: T.display, fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', marginTop: 14, color: T.paper, lineHeight: 1.2, maxWidth: 300, padding: '0 24px' }}>
+            {loadingLine}
           </div>
         </div>
       </main>
