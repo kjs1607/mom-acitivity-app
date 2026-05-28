@@ -13,12 +13,22 @@ const T = {
   ink2:    '#5C463A',
   ink3:    '#8B7567',
   terra:   '#C4654A',
+  mustard: '#E8A33A',
+  sage:    '#7A8E6D',
   border:  'rgba(43,24,16,0.10)',
   borderStrong: 'rgba(43,24,16,0.18)',
   display: '"Bricolage Grotesque", system-ui, sans-serif',
   body:    '"Inter Tight", system-ui, sans-serif',
   mono:    '"JetBrains Mono", ui-monospace, monospace',
 } as const;
+
+function SparkGlyph({ size = 24, color = T.ink, style }: { size?: number; color?: string; style?: React.CSSProperties }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" style={style}>
+      <path d="M50 0 C52 32 68 48 100 50 C68 52 52 68 50 100 C48 68 32 52 0 50 C32 48 48 32 50 0 Z" fill={color} />
+    </svg>
+  );
+}
 
 function Onboarding() {
   const { profile, update } = useProfile();
@@ -41,28 +51,37 @@ function Onboarding() {
 
   return (
     <main style={{ minHeight: '100svh', background: T.cream, paddingBottom: 120 }}>
-      {/* Progress bars */}
-      <div style={{ padding: '52px 24px 0', display: 'flex', gap: 6 }}>
-        <div style={{ flex: 1, height: 5, borderRadius: 999, background: step >= 0 ? T.terra : 'rgba(43,24,16,0.12)' }}/>
-        <div style={{ flex: 1, height: 5, borderRadius: 999, background: step >= 1 ? T.terra : 'rgba(43,24,16,0.12)' }}/>
-      </div>
+      {/* Progress bars — step 1 only */}
+      {step >= 1 && (
+        <div style={{ padding: '52px 24px 0', display: 'flex', gap: 6 }}>
+          <div style={{ flex: 1, height: 5, borderRadius: 999, background: T.terra }}/>
+          <div style={{ flex: 1, height: 5, borderRadius: 999, background: T.terra }}/>
+        </div>
+      )}
 
-      {/* Step 0 — Intro */}
+      {/* Step 0 — Welcome hero */}
       {step === 0 && (
-        <section style={{ padding: '32px 24px 0' }}>
-          <h1 style={{ fontFamily: T.display, fontSize: 38, lineHeight: 0.95, fontWeight: 700, letterSpacing: '-0.03em', color: T.ink, margin: 0 }}>
-            Hi. Let's keep this short.
-          </h1>
-          <p style={{ fontFamily: T.body, fontSize: 15, color: T.ink2, margin: '14px 0 0', lineHeight: 1.5 }}>
-            Real activity ideas that fit your{' '}
-          <span style={{ color: T.terra, fontWeight: 600 }}>kid</span>, your{' '}
-          <span style={{ color: T.terra, fontWeight: 600 }}>hour</span>, and your stuff.
-          </p>
-          <div style={{ marginTop: 28, padding: '20px 22px', borderRadius: 22, background: T.paper, border: `1px solid ${T.border}` }}>
-            <p style={{ fontFamily: T.display, fontSize: 20, fontWeight: 600, color: T.ink, margin: 0, lineHeight: 1.2 }}>
-              You bring the kids.<br/>We bring the idea.
+        <section style={{ padding: '56px 20px 0' }}>
+          {/* Terra hero card */}
+          <div style={{
+            position: 'relative', height: 340, borderRadius: 28,
+            background: T.terra, overflow: 'hidden',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <div style={{ position: 'absolute', top: -90, right: -80, width: 220, height: 220, borderRadius: '50%', background: T.mustard }}/>
+            <div style={{ position: 'absolute', bottom: -60, left: -50, width: 180, height: 180, borderRadius: '50%', background: T.sage }}/>
+            <SparkGlyph size={170} color={T.paper} style={{ position: 'relative', filter: 'drop-shadow(0 6px 0 rgba(43,24,16,0.18))' }}/>
+            <span style={{ position: 'absolute', top: 18, left: 18, fontFamily: T.mono, fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,251,243,0.7)' }}>v.1 · est. '26</span>
+            <span style={{ position: 'absolute', bottom: 18, right: 20, fontFamily: T.mono, fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(255,251,243,0.7)' }}>four taps to playtime</span>
+          </div>
+          {/* Wordmark + pitch */}
+          <div style={{ padding: '28px 8px 0' }}>
+            <h1 style={{ fontFamily: T.display, fontSize: 72, lineHeight: 0.88, margin: 0, fontWeight: 700, letterSpacing: '-0.045em', color: T.ink }}>Spark.</h1>
+            <p style={{ fontFamily: T.body, fontSize: 16, lineHeight: 1.35, color: T.ink2, margin: '16px 0 0', maxWidth: 320 }}>
+              Real activity ideas that fit your{' '}
+              <span style={{ color: T.terra, fontWeight: 600 }}>kid</span>, your{' '}
+              <span style={{ color: T.terra, fontWeight: 600 }}>hour</span>, and your stuff.
             </p>
-            <p style={{ fontFamily: T.body, fontSize: 13, color: T.ink3, margin: '8px 0 0' }}>Takes 30 seconds.</p>
           </div>
         </section>
       )}
@@ -198,7 +217,7 @@ function Onboarding() {
               boxShadow: '0 8px 20px rgba(159,74,48,0.35)',
             }}
           >
-            <span>Let's go</span>
+            <span>Light it up</span>
             <span style={{ fontSize: 22 }}>→</span>
           </button>
         ) : (

@@ -259,7 +259,7 @@ function ActivityDetail() {
             boxShadow: '0 8px 20px rgba(43,24,16,0.25)',
           }}
         >
-          <span>{doneFlash ? "Logged ✓" : "We did this!"}</span>
+          <span>{doneFlash ? "Logged ✓" : "Got it"}</span>
           {!doneFlash && <span style={{ fontSize: 22 }}>→</span>}
         </button>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -274,7 +274,7 @@ function ActivityDetail() {
               cursor: 'pointer', opacity: regenerating ? 0.5 : 1,
             }}
           >
-            {regenerating ? 'Finding…' : '↻ Try another'}
+            {regenerating ? 'Finding…' : '↻ Spin again'}
           </button>
           <button
             onClick={toggleSave}
@@ -287,7 +287,7 @@ function ActivityDetail() {
               cursor: 'pointer',
             }}
           >
-            {isSaved ? '♡ Saved' : '♡ Save'}
+            {isSaved ? '＋ Saved' : '＋ Save'}
           </button>
         </div>
       </footer>
