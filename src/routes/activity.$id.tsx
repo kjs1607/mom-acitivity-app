@@ -10,18 +10,20 @@ export const Route = createFileRoute("/activity/$id")({
 
 // ── Spark design tokens ───────────────────────────────────────────────
 const T = {
-  cream:   '#FBF4EA',
-  paper:   '#FFFBF3',
-  ink:     '#2B1810',
-  ink2:    '#5C463A',
-  ink3:    '#8B7567',
-  terra:   '#C4654A',
-  mustard: '#E8A33A',
-  sage:    '#7A8E6D',
-  plum:    '#5E3A4F',
-  border:  'rgba(43,24,16,0.10)',
+  cream:     '#F7EFDF',
+  creamDeep: '#ECDFC6',
+  paper:     '#FCF8EE',
+  ink:       '#3A332C',
+  ink2:      '#756758',
+  ink3:      '#A89E91',
+  terra:     '#C84A3A',
+  terraDeep: '#A33828',
+  mustard:   '#F5E0AB',
+  sage:      '#8FAEC4',
+  plum:      '#8FAEC4',
+  border:    'rgba(58,51,44,0.10)',
   display: '"Bricolage Grotesque", system-ui, sans-serif',
-  body:    '"Inter Tight", system-ui, sans-serif',
+  body:    '"Geist", "Inter Tight", system-ui, sans-serif',
   mono:    '"JetBrains Mono", ui-monospace, monospace',
 } as const;
 
@@ -58,7 +60,7 @@ function CircleBtn({ children, onClick, style }: { children: React.ReactNode; on
   return (
     <button onClick={onClick} style={{
       width: 36, height: 36, borderRadius: 999,
-      background: 'rgba(43,24,16,0.06)', border: 'none', cursor: 'pointer',
+      background: 'rgba(58,51,44,0.06)', border: 'none', cursor: 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       ...style,
     }}>
@@ -135,7 +137,7 @@ function ActivityDetail() {
         <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.ink3 }}>
           your spark
         </span>
-        <CircleBtn onClick={toggleSave} style={{ background: isSaved ? 'rgba(196,101,74,0.12)' : 'rgba(43,24,16,0.06)' }}>
+        <CircleBtn onClick={toggleSave} style={{ background: isSaved ? 'rgba(200,74,58,0.12)' : 'rgba(58,51,44,0.06)' }}>
           <HeartIcon filled={isSaved} />
         </CircleBtn>
       </header>
@@ -187,9 +189,9 @@ function ActivityDetail() {
           {activity.needs.map((n, i) => (
             <span key={n} style={{
               padding: '6px 12px', borderRadius: 999,
-              background: i === 0 ? 'rgba(196,101,74,0.12)' : i === 1 ? 'rgba(43,24,16,0.06)' : 'transparent',
+              background: i === 0 ? 'rgba(200,74,58,0.12)' : i === 1 ? 'rgba(58,51,44,0.06)' : 'transparent',
               border: i >= 2 ? `1px solid ${T.border}` : 'none',
-              color: i === 0 ? '#9F4A30' : T.ink2,
+              color: i === 0 ? T.terraDeep : T.ink2,
               fontFamily: T.body, fontSize: 13, fontWeight: 500,
             }}>
               {n}
@@ -228,11 +230,11 @@ function ActivityDetail() {
 
       {/* Sibling tip */}
       {profile.children.length >= 2 && activity.siblingTip && (
-        <div style={{ margin: '28px 24px 0', padding: 18, borderRadius: 22, background: 'rgba(122,142,109,0.18)', border: '1px solid rgba(122,142,109,0.3)' }}>
-          <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#4D5E40', marginBottom: 6 }}>
+        <div style={{ margin: '28px 24px 0', padding: 18, borderRadius: 22, background: 'rgba(143,174,196,0.18)', border: '1px solid rgba(143,174,196,0.3)' }}>
+          <div style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.ink2, marginBottom: 6 }}>
             Sibling mode
           </div>
-          <p style={{ fontFamily: T.body, fontSize: 14, color: '#3A4D2E', lineHeight: 1.5, margin: 0 }}>
+          <p style={{ fontFamily: T.body, fontSize: 14, color: T.ink, lineHeight: 1.5, margin: 0 }}>
             {activity.siblingTip}
           </p>
         </div>
@@ -256,7 +258,7 @@ function ActivityDetail() {
             letterSpacing: '-0.01em', border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             transition: 'background 0.3s',
-            boxShadow: '0 8px 20px rgba(43,24,16,0.25)',
+            boxShadow: '0 8px 20px rgba(58,51,44,0.25)',
           }}
         >
           <span>{doneFlash ? "Logged ✓" : "Got it"}</span>
@@ -280,9 +282,9 @@ function ActivityDetail() {
             onClick={toggleSave}
             style={{
               flex: 1, padding: '14px 16px', borderRadius: 999,
-              background: isSaved ? 'rgba(196,101,74,0.12)' : T.paper,
+              background: isSaved ? 'rgba(200,74,58,0.12)' : T.paper,
               color: isSaved ? T.terra : T.ink,
-              border: `1px solid ${isSaved ? 'rgba(196,101,74,0.3)' : T.border}`,
+              border: `1px solid ${isSaved ? 'rgba(200,74,58,0.3)' : T.border}`,
               fontFamily: T.body, fontWeight: 500, fontSize: 14,
               cursor: 'pointer',
             }}
