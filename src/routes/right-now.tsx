@@ -203,7 +203,7 @@ function RightNow() {
 
       {/* Step 2 — Pantry */}
       {step === 2 && (
-        <section style={{ padding: '24px 24px 0', paddingBottom: 96 }}>
+        <section style={{ padding: '24px 24px 0' }}>
           <QuizTitle title={<>What do<br/>you have?</>} subtitle="Pick everything that applies." />
           <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {PANTRY_CATEGORIES.map((cat) => {
@@ -222,6 +222,20 @@ function RightNow() {
               );
             })}
           </div>
+          <button
+            onClick={() => setStep(3)}
+            style={{
+              width: '100%', marginTop: 16, padding: '18px 22px', borderRadius: 999,
+              background: T.ink, color: T.paper,
+              fontFamily: T.display, fontWeight: 600, fontSize: 18,
+              letterSpacing: '-0.01em', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              boxShadow: '0 8px 20px rgba(43,24,16,0.3)',
+            }}
+          >
+            <span>Continue</span>
+            <span style={{ fontSize: 22 }}>→</span>
+          </button>
         </section>
       )}
 
@@ -248,30 +262,6 @@ function RightNow() {
         </section>
       )}
 
-      {/* Step 2 footer — continue button */}
-      {step === 2 && (
-        <footer style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0,
-          background: 'rgba(251,244,234,0.95)', backdropFilter: 'blur(12px)',
-          borderTop: `1px solid ${T.border}`,
-          padding: '12px 22px 32px',
-        }}>
-          <button
-            onClick={() => setStep(3)}
-            style={{
-              width: '100%', padding: '18px 22px', borderRadius: 999,
-              background: T.ink, color: T.paper,
-              fontFamily: T.display, fontWeight: 600, fontSize: 18,
-              letterSpacing: '-0.01em', border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              boxShadow: '0 8px 20px rgba(43,24,16,0.3)',
-            }}
-          >
-            <span>Continue</span>
-            <span style={{ fontSize: 22 }}>→</span>
-          </button>
-        </footer>
-      )}
     </main>
   );
 }
