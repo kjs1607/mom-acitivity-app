@@ -7,17 +7,19 @@ export const Route = createFileRoute("/")({
 });
 
 const T = {
-  cream:   '#FBF4EA',
-  paper:   '#FFFBF3',
-  ink:     '#2B1810',
-  ink2:    '#5C463A',
-  ink3:    '#8B7567',
-  terra:   '#C4654A',
-  mustard: '#E8A33A',
-  sage:    '#7A8E6D',
-  border:  'rgba(43,24,16,0.10)',
+  cream:     '#F7EFDF',
+  creamDeep: '#ECDFC6',
+  paper:     '#FCF8EE',
+  ink:       '#3A332C',
+  ink2:      '#756758',
+  ink3:      '#A89E91',
+  terra:     '#C84A3A',
+  terraDeep: '#A33828',
+  mustard:   '#F5E0AB',
+  sage:      '#8FAEC4',
+  border:    'rgba(58,51,44,0.10)',
   display: '"Bricolage Grotesque", system-ui, sans-serif',
-  body:    '"Inter Tight", system-ui, sans-serif',
+  body:    '"Geist", "Inter Tight", system-ui, sans-serif',
   mono:    '"JetBrains Mono", ui-monospace, monospace',
 } as const;
 
@@ -63,7 +65,7 @@ function Index() {
         <Link to="/settings" style={{ textDecoration: 'none' }}>
           <button style={{
             width: 36, height: 36, borderRadius: 999,
-            background: 'rgba(43,24,16,0.06)', border: 'none', cursor: 'pointer',
+            background: 'rgba(58,51,44,0.06)', border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 6,
           }}>
             <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -82,7 +84,7 @@ function Index() {
             padding: '26px 24px 22px', borderRadius: 26,
             background: T.terra, color: T.cream,
             display: 'flex', flexDirection: 'column', gap: 10,
-            boxShadow: '0 8px 24px rgba(43,24,16,0.12)',
+            boxShadow: '0 8px 24px rgba(58,51,44,0.12)',
             boxSizing: 'border-box',
           }}>
             {/* Sparkle deco */}

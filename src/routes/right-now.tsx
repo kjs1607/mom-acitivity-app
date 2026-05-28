@@ -10,18 +10,20 @@ export const Route = createFileRoute("/right-now")({
 
 // ── Spark design tokens ───────────────────────────────────────────────
 const T = {
-  cream:   '#FBF4EA',
-  paper:   '#FFFBF3',
-  ink:     '#2B1810',
-  ink2:    '#5C463A',
-  ink3:    '#8B7567',
-  terra:   '#C4654A',
-  mustard: '#E8A33A',
-  sage:    '#7A8E6D',
-  plum:    '#5E3A4F',
-  border:  'rgba(43,24,16,0.10)',
+  cream:     '#F7EFDF',
+  creamDeep: '#ECDFC6',
+  paper:     '#FCF8EE',
+  ink:       '#3A332C',
+  ink2:      '#756758',
+  ink3:      '#A89E91',
+  terra:     '#C84A3A',
+  terraDeep: '#A33828',
+  mustard:   '#F5E0AB',
+  sage:      '#8FAEC4',
+  plum:      '#8FAEC4',
+  border:    'rgba(58,51,44,0.10)',
   display: '"Bricolage Grotesque", system-ui, sans-serif',
-  body:    '"Inter Tight", system-ui, sans-serif',
+  body:    '"Geist", "Inter Tight", system-ui, sans-serif',
   mono:    '"JetBrains Mono", ui-monospace, monospace',
 } as const;
 
@@ -97,7 +99,7 @@ function RightNow() {
         <SparkGlyph
           size={180}
           color={T.terra}
-          style={{ filter: 'drop-shadow(0 0 40px rgba(196,101,74,0.4))', animation: 'sparkSpin 2.4s linear infinite' }}
+          style={{ filter: 'drop-shadow(0 0 40px rgba(200,74,58,0.4))', animation: 'sparkSpin 2.4s linear infinite' }}
         />
 
         <div style={{ marginTop: 36, textAlign: 'center' }}>
@@ -133,7 +135,7 @@ function RightNow() {
             height: 6,
             width: i <= step ? 22 : 6,
             borderRadius: 999,
-            background: i <= step ? T.terra : 'rgba(43,24,16,0.15)',
+            background: i <= step ? T.terra : 'rgba(58,51,44,0.15)',
             transition: 'width 0.25s ease',
           }}/>
         ))}
@@ -363,7 +365,7 @@ function CircleBtn({ children, onClick }: { children: React.ReactNode; onClick?:
   return (
     <button onClick={onClick} style={{
       width: 36, height: 36, borderRadius: 999,
-      background: 'rgba(43,24,16,0.06)', border: 'none', cursor: 'pointer',
+      background: 'rgba(58,51,44,0.06)', border: 'none', cursor: 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       {children}
