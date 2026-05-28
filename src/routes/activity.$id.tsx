@@ -137,9 +137,7 @@ function ActivityDetail() {
         <span style={{ fontFamily: T.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.ink3 }}>
           your spark
         </span>
-        <CircleBtn onClick={toggleSave} style={{ background: isSaved ? 'rgba(200,74,58,0.12)' : 'rgba(58,51,44,0.06)' }}>
-          <HeartIcon filled={isSaved} />
-        </CircleBtn>
+        <div style={{ width: 36 }} />
       </header>
 
       {/* Hero block */}
@@ -274,19 +272,6 @@ function ActivityDetail() {
             }}
           >
             {regenerating ? 'Finding…' : '↻ Spin again'}
-          </button>
-          <button
-            onClick={toggleSave}
-            style={{
-              flex: 1, padding: '14px 16px', borderRadius: 999,
-              background: isSaved ? 'rgba(200,74,58,0.12)' : T.paper,
-              color: isSaved ? T.terra : T.ink,
-              border: `1px solid ${isSaved ? 'rgba(200,74,58,0.3)' : T.border}`,
-              fontFamily: T.body, fontWeight: 500, fontSize: 14,
-              cursor: 'pointer',
-            }}
-          >
-            {isSaved ? '＋ Saved' : '＋ Save'}
           </button>
         </div>
       </footer>
